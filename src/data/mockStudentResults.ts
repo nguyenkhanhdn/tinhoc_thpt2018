@@ -407,7 +407,7 @@ export const INITIAL_SAMPLE_EXAM_RESULTS: ExamResult[] = [
       q16: { questionId: 'q16', singleChoiceSelected: 'A' },
       q17: { questionId: 'q17', singleChoiceSelected: 'B' },
       q18: { questionId: 'q18', singleChoiceSelected: 'B' },
-      q19: {スキンId: 'q19', singleChoiceSelected: 'B' },
+      q19: { questionId: 'q19', singleChoiceSelected: 'B' },
       q20: { questionId: 'q20', singleChoiceSelected: 'B' },
       q21: { questionId: 'q21', singleChoiceSelected: 'B' },
       q22: { questionId: 'q22', singleChoiceSelected: 'B' },

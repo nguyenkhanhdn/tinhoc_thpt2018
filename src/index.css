@@ -1,1 +1,81 @@
 @import "tailwindcss";
+
+@keyframes urgencyGlow {
+  0%, 100% {
+    box-shadow: 0 0 12px 2px rgba(239, 68, 68, 0.6), 0 0 0 2px rgba(239, 68, 68, 0.4);
+    background-color: #b91c1c;
+    border-color: #fca5a5;
+  }
+  33% {
+    box-shadow: 0 0 22px 5px rgba(249, 115, 22, 0.7), 0 0 0 2px rgba(249, 115, 22, 0.6);
+    background-color: #c2410c;
+    border-color: #fdba74;
+  }
+  66% {
+    box-shadow: 0 0 26px 6px rgba(220, 38, 38, 0.85), 0 0 0 2px rgba(239, 68, 68, 0.8);
+    background-color: #dc2626;
+    border-color: #fecaca;
+  }
+}
+
+@keyframes urgencyGlowCritical {
+  0%, 100% {
+    box-shadow: 0 0 16px 4px rgba(239, 68, 68, 0.9), 0 0 0 3px rgba(239, 68, 68, 0.7);
+    background-color: #991b1b;
+    border-color: #fecaca;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 30px 8px rgba(234, 88, 12, 0.95), 0 0 0 4px rgba(249, 115, 22, 0.9);
+    background-color: #dc2626;
+    border-color: #ffedd5;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes progressPulse {
+  0%, 100% {
+    filter: brightness(1);
+    opacity: 0.95;
+  }
+  50% {
+    filter: brightness(1.35) drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
+    opacity: 1;
+  }
+}
+
+@keyframes urgentStripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 36px 0;
+  }
+}
+
+.animate-urgency-glow {
+  animation: urgencyGlow 2s ease-in-out infinite;
+}
+
+.animate-urgency-glow-critical {
+  animation: urgencyGlowCritical 0.8s ease-in-out infinite;
+}
+
+.animate-progress-pulse {
+  animation: progressPulse 1.4s ease-in-out infinite;
+}
+
+.animate-stripes {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.25) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.25) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 24px 24px;
+  animation: urgentStripes 1s linear infinite;
+}

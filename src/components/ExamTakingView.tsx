@@ -12,6 +12,8 @@ import {
   CheckCircle2, 
   XCircle, 
   AlertCircle, 
+  AlertTriangle,
+  Flame,
   Sparkles, 
   Code, 
   Send,
@@ -62,7 +64,13 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const isLowTime = examMode === 'exam' && timeRemaining <= 5 * 60;
+  // Time & Progress calculations
+  const totalDurationSeconds = (currentExam.durationMinutes || 50) * 60;
+  const timePercentage = Math.max(0, Math.min(100, (timeRemaining / totalDurationSeconds) * 100));
+  
+  const isUnder5Mins = examMode === 'exam' && timeRemaining <= 5 * 60 && timeRemaining > 0;
+  const isUnder2Mins = examMode === 'exam' && timeRemaining <= 2 * 60 && timeRemaining > 0;
+  const isUnder1Min = examMode === 'exam' && timeRemaining <= 60 && timeRemaining > 0;
 
   // Calculate answered count
   let answeredCount = 0;
@@ -106,7 +114,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
     <div className="min-h-screen bg-slate-100 flex flex-col">
       
       {/* Sticky Exam Top Bar */}
-      <header className="sticky top-0 z-30 bg-slate-900 text-white shadow-md border-b border-slate-800">
+      <header className="sticky top-0 z-30 bg-slate-900 text-white shadow-lg border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           {/* Exam Title & Exit */}
@@ -125,13 +133,13 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
 
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-xs sm:text-sm text-white line-clamp-1 max-w-[280px] sm:max-w-md">
+                <span className="font-bold text-xs sm:text-sm text-white line-clamp-1 max-w-[240px] sm:max-w-md">
                   {currentExam.title}
                 </span>
                 <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
                   examMode === 'exam' ? 'bg-amber-500/30 text-amber-300 border border-amber-400/30' : 'bg-blue-500/30 text-blue-300 border border-blue-400/30'
                 }`}>
-                  {examMode === 'exam' ? 'Thi thử (50p)' : 'Ôn tập tự do'}
+                  {examMode === 'exam' ? `Thi thử (${currentExam.durationMinutes}p)` : 'Ôn tập tự do'}
                 </span>
               </div>
             </div>
@@ -140,29 +148,103 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
           {/* Timer & Submit CTA */}
           <div className="flex items-center gap-3 sm:gap-4">
             
-            {/* Timer Badge */}
+            {/* Urgency Color-Changing Timer Badge */}
             {examMode === 'exam' && (
-              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono text-sm font-bold border transition-colors ${
-                isLowTime
-                  ? 'bg-red-500/20 text-red-300 border-red-500/40 animate-pulse'
-                  : 'bg-white/10 text-white border-white/15'
-              }`}>
-                <Clock className={`w-4 h-4 ${isLowTime ? 'text-red-400' : 'text-blue-400'}`} />
-                <span>{formatTime(timeRemaining)}</span>
+              <div className="flex items-center gap-2">
+                <div 
+                  id="exam-timer-badge"
+                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-mono text-sm font-bold border transition-all duration-300 ${
+                    isUnder1Min
+                      ? 'animate-urgency-glow-critical text-white'
+                      : isUnder5Mins
+                      ? 'animate-urgency-glow text-white'
+                      : 'bg-slate-800/90 text-slate-100 border-slate-700/80 shadow-xs'
+                  }`}
+                  title={isUnder5Mins ? 'Cảnh báo: Thời gian làm bài còn dưới 5 phút!' : 'Thời gian làm bài còn lại'}
+                >
+                  {isUnder5Mins ? (
+                    <Flame className={`w-4 h-4 text-amber-200 ${isUnder2Mins ? 'animate-bounce' : 'animate-pulse'}`} />
+                  ) : (
+                    <Clock className="w-4 h-4 text-sky-400" />
+                  )}
+                  
+                  <span className="tracking-wider text-sm sm:text-base font-black">
+                    {formatTime(timeRemaining)}
+                  </span>
+
+                  {isUnder5Mins && (
+                    <span className="text-[10px] uppercase font-black tracking-wider px-1.5 py-0.5 rounded bg-black/40 text-amber-100 hidden sm:inline-block shadow-xs border border-white/20">
+                      {isUnder1Min ? 'Sắp hết giờ!' : '< 5 Phút'}
+                    </span>
+                  )}
+                </div>
               </div>
             )}
 
             {/* Submit Button */}
             <button
               onClick={() => setShowSubmitConfirm(true)}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5"
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Nộp bài thi</span>
             </button>
           </div>
         </div>
+
+        {/* Dynamic Visual Progress Bar for Exam Time */}
+        {examMode === 'exam' && (
+          <div className="w-full bg-slate-950/80 h-1.5 sm:h-2 relative overflow-hidden border-t border-slate-800">
+            <div 
+              id="exam-time-progress-bar"
+              className={`h-full transition-all duration-500 ease-linear relative ${
+                isUnder1Min
+                  ? 'bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 animate-stripes animate-progress-pulse'
+                  : isUnder5Mins
+                  ? 'bg-gradient-to-r from-rose-600 via-amber-500 to-red-500 animate-stripes animate-progress-pulse'
+                  : timePercentage <= 30
+                  ? 'bg-gradient-to-r from-amber-500 to-amber-400'
+                  : 'bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500'
+              }`}
+              style={{ width: `${timePercentage}%` }}
+            />
+          </div>
+        )}
       </header>
+
+      {/* Urgent Warning Banner when < 5 minutes remaining */}
+      {isUnder5Mins && (
+        <div className="bg-gradient-to-r from-rose-700 via-red-600 to-amber-600 text-white px-4 py-2.5 shadow-md animate-in slide-in-from-top-3 duration-300">
+          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2 font-medium">
+              <div className="p-1 bg-white/20 rounded-lg animate-pulse shrink-0">
+                <AlertTriangle className="w-4 h-4 text-amber-200" />
+              </div>
+              <div>
+                <span className="font-black uppercase tracking-wider text-amber-200 mr-1.5">
+                  Khẩn trương:
+                </span>
+                <span>
+                  Thời gian làm bài chỉ còn lại <strong className="underline decoration-amber-300 font-mono text-sm font-black text-amber-100">{formatTime(timeRemaining)}</strong>. Hãy rà soát lại các câu hỏi phân vân trước khi hệ thống tự động nộp bài!
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-2 bg-black/25 px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-white/10">
+                <span>Thời gian còn:</span>
+                <span className="font-mono font-bold text-amber-200">{Math.round(timePercentage)}%</span>
+              </div>
+              <button
+                onClick={() => setShowSubmitConfirm(true)}
+                className="px-3 py-1 bg-white text-rose-800 font-bold rounded-lg hover:bg-amber-50 transition-colors shadow-xs"
+              >
+                Nộp ngay
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -409,8 +491,44 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
 
         {/* Right Column: Question Palette Matrix */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sticky top-20">
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sticky top-24">
             
+            {/* Sidebar Time Summary Widget for Exam Mode */}
+            {examMode === 'exam' && (
+              <div className={`p-3.5 rounded-xl border mb-4 transition-all duration-300 ${
+                isUnder5Mins
+                  ? 'bg-rose-50 border-rose-200 text-rose-950'
+                  : 'bg-slate-50 border-slate-200 text-slate-800'
+              }`}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold">
+                    {isUnder5Mins ? (
+                      <Flame className="w-4 h-4 text-rose-600 animate-bounce" />
+                    ) : (
+                      <Clock className="w-4 h-4 text-indigo-600" />
+                    )}
+                    <span>{isUnder5Mins ? 'Sắp hết giờ làm bài' : 'Thời gian còn lại'}</span>
+                  </div>
+                  <span className={`font-mono font-black text-sm ${
+                    isUnder5Mins ? 'text-rose-600 animate-pulse' : 'text-slate-900'
+                  }`}>
+                    {formatTime(timeRemaining)}
+                  </span>
+                </div>
+
+                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                  <div 
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      isUnder5Mins
+                        ? 'bg-gradient-to-r from-rose-500 to-red-600 animate-progress-pulse'
+                        : 'bg-indigo-600'
+                    }`}
+                    style={{ width: `${timePercentage}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Palette Header */}
             <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
@@ -472,7 +590,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
             <div className="mt-5 pt-4 border-t border-slate-100">
               <button
                 onClick={() => setShowSubmitConfirm(true)}
-                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Send className="w-4 h-4" />
                 <span>Nộp bài và xem kết quả</span>
