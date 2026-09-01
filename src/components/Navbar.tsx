@@ -1,0 +1,260 @@
+import React from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useExam } from '../context/ExamContext';
+import { 
+  GraduationCap, 
+  BookOpen, 
+  FileText, 
+  Bookmark, 
+  BarChart3, 
+  UserCheck, 
+  LogOut, 
+  User, 
+  ShieldAlert, 
+  Sparkles,
+  ArrowRightLeft
+} from 'lucide-react';
+
+interface NavbarProps {
+  activeTab: 'exams' | 'theory' | 'notebook' | 'analytics' | 'teacher';
+  setActiveTab: (tab: 'exams' | 'theory' | 'notebook' | 'analytics' | 'teacher') => void;
+  onOpenAuth: (mode?: 'login' | 'register') => void;
+  onOpenProfile: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({
+  activeTab,
+  setActiveTab,
+  onOpenAuth,
+  onOpenProfile
+}) => {
+  const { currentUser, isAuthenticated, logout, switchDemoRole } = useAuth();
+  const { bookmarks } = useExam();
+
+  const userBookmarksCount = bookmarks.filter(b => !currentUser || b.userId === currentUser.id).length;
+
+  return (
+    <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          
+          {/* Brand Logo & Title */}
+          <div 
+            onClick={() => setActiveTab('exams')}
+            className="flex items-center gap-3 cursor-pointer group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-indigo-700 flex items-center justify-center text-white shadow-xs group-hover:bg-indigo-800 transition-colors">
+              <GraduationCap className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-base tracking-tight text-slate-900">
+                  TIN HỌC THPT
+                </span>
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-md">
+                  GDPT 2018
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 hidden sm:block">
+                Hệ Thống Ôn Thi & Khảo Sát Tốt Nghiệp THPT Quốc Gia
+              </p>
+            </div>
+          </div>
+
+          {/* Center Navigation Tabs */}
+          <nav className="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80">
+            <button
+              onClick={() => setActiveTab('exams')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'exams'
+                  ? 'bg-white text-indigo-700 font-bold shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>Đề Thi & Luyện Tập</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('theory')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'theory'
+                  ? 'bg-white text-indigo-700 font-bold shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Thư Viện Lý Thuyết</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('notebook')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all relative ${
+                activeTab === 'notebook'
+                  ? 'bg-white text-amber-700 font-bold shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+              }`}
+            >
+              <Bookmark className="w-3.5 h-3.5" />
+              <span>Sổ Tay Câu Hỏi</span>
+              {userBookmarksCount > 0 && (
+                <span className="px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[10px] font-bold">
+                  {userBookmarksCount}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'analytics'
+                  ? 'bg-white text-emerald-700 font-bold shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+              }`}
+            >
+              <BarChart3 className="w-3.5 h-3.5" />
+              <span>Phân Tích Năng Lực</span>
+            </button>
+
+            {/* Teacher Studio Tab */}
+            <button
+              onClick={() => setActiveTab('teacher')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'teacher'
+                  ? 'bg-indigo-700 text-white font-bold shadow-xs'
+                  : 'text-indigo-700 hover:bg-indigo-50'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Biên Soạn Giáo Viên</span>
+            </button>
+          </nav>
+
+          {/* Right Action: User Menu & Role Switch */}
+          <div className="flex items-center gap-2">
+            
+            {/* Quick Demo Switcher */}
+            {isAuthenticated && currentUser && (
+              <div className="hidden lg:flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl p-1 text-[11px]">
+                <span className="text-slate-500 px-1 font-medium">Vai trò:</span>
+                <button
+                  onClick={() => switchDemoRole('student')}
+                  className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                    currentUser.role === 'student'
+                      ? 'bg-indigo-700 text-white font-bold shadow-xs'
+                      : 'text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  Học Sinh
+                </button>
+                <button
+                  onClick={() => switchDemoRole('teacher')}
+                  className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                    currentUser.role === 'teacher'
+                      ? 'bg-indigo-700 text-white font-bold shadow-xs'
+                      : 'text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  Giáo Viên
+                </button>
+              </div>
+            )}
+
+            {/* User Profile Button or Login */}
+            {isAuthenticated && currentUser ? (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={onOpenProfile}
+                  className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-slate-50 transition-all text-left"
+                >
+                  <div className="w-7 h-7 rounded-lg overflow-hidden bg-indigo-700 flex items-center justify-center text-white text-xs font-bold shadow-xs">
+                    {currentUser.avatarUrl ? (
+                      <img src={currentUser.avatarUrl} alt={currentUser.fullName} className="w-full h-full object-cover" />
+                    ) : (
+                      currentUser.fullName.charAt(0)
+                    )}
+                  </div>
+                  <div className="hidden sm:block">
+                    <div className="text-xs font-bold text-slate-800 leading-tight">
+                      {currentUser.fullName}
+                    </div>
+                    <div className="text-[10px] text-slate-500">
+                      {currentUser.province} • {currentUser.role === 'teacher' ? 'GV Tin' : 'HS 12'}
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={logout}
+                  title="Đăng xuất"
+                  className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => onOpenAuth('login')}
+                  className="px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition-colors"
+                >
+                  Đăng Nhập
+                </button>
+                <button
+                  onClick={() => onOpenAuth('register')}
+                  className="px-3.5 py-1.5 text-xs font-semibold text-white bg-indigo-700 hover:bg-indigo-800 rounded-xl transition-colors shadow-xs"
+                >
+                  Đăng Ký
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Navigation Row */}
+        <div className="flex md:hidden items-center justify-around py-2 border-t border-slate-100 overflow-x-auto gap-1">
+          <button
+            onClick={() => setActiveTab('exams')}
+            className={`px-2.5 py-1 text-xs font-medium rounded-lg ${
+              activeTab === 'exams' ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-600'
+            }`}
+          >
+            Đề Thi
+          </button>
+          <button
+            onClick={() => setActiveTab('theory')}
+            className={`px-2.5 py-1 text-xs font-medium rounded-lg ${
+              activeTab === 'theory' ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-600'
+            }`}
+          >
+            Lý Thuyết
+          </button>
+          <button
+            onClick={() => setActiveTab('notebook')}
+            className={`px-2.5 py-1 text-xs font-medium rounded-lg ${
+              activeTab === 'notebook' ? 'bg-amber-50 text-amber-700 font-bold' : 'text-slate-600'
+            }`}
+          >
+            Sổ Tay ({userBookmarksCount})
+          </button>
+          <button
+            onClick={() => setActiveTab('analytics')}
+            className={`px-2.5 py-1 text-xs font-medium rounded-lg ${
+              activeTab === 'analytics' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-600'
+            }`}
+          >
+            Phân Tích
+          </button>
+          <button
+            onClick={() => setActiveTab('teacher')}
+            className={`px-2.5 py-1 text-xs font-medium rounded-lg ${
+              activeTab === 'teacher' ? 'bg-indigo-700 text-white font-bold' : 'text-indigo-700'
+            }`}
+          >
+            Biên Soạn
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+};
