@@ -71,7 +71,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${
                   currentUser.role === 'teacher' ? 'bg-purple-500/30 text-purple-200 border border-purple-400/30' : 'bg-blue-500/30 text-blue-200 border border-blue-400/30'
                 }`}>
-                  {currentUser.role === 'teacher' ? 'Giáo Viên Tin Học' : 'Thí Sinh Luyện Thi'}
+                  {currentUser.role === 'teacher' ? 'Giáo viên Tin học' : 'Thí sinh luyện thi'}
                 </span>
               </div>
               <p className="text-blue-200 text-xs mt-1">
@@ -193,7 +193,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
           {currentUser.role === 'student' && (
             <div className="p-3.5 bg-blue-50/70 border border-blue-100 rounded-xl">
               <div className="flex justify-between items-center mb-1.5">
-                <span className="text-xs font-semibold text-blue-900">Mục tiêu điểm thi Tốt nghiệp THPT:</span>
+                <span className="text-xs font-semibold text-blue-900">Mục tiêu điểm thi tốt nghiệp THPT:</span>
                 <span className="text-sm font-bold text-blue-700">{targetScore} / 10.0</span>
               </div>
               <input
@@ -220,7 +220,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               type="submit"
               className="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-xl transition-colors shadow-xs"
             >
-              Lưu Thay Đổi
+              Lưu thay đổi
             </button>
           </div>
         </form>

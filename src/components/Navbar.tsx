@@ -49,14 +49,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-base tracking-tight text-slate-900">
-                  TIN HỌC THPT
+                  Tin học THPT
                 </span>
                 <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-md">
                   GDPT 2018
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 hidden sm:block">
-                Hệ Thống Ôn Thi & Khảo Sát Tốt Nghiệp THPT Quốc Gia
+                Hệ thống ôn thi và khảo sát tốt nghiệp THPT
               </p>
             </div>
           </div>
@@ -72,7 +72,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
-              <span>Đề Thi & Luyện Tập</span>
+              <span>Đề thi và luyện tập</span>
             </button>
 
             <button
@@ -84,7 +84,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span>Thư Viện Lý Thuyết</span>
+              <span>Thư viện lý thuyết</span>
             </button>
 
             <button
@@ -96,7 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <Bookmark className="w-3.5 h-3.5" />
-              <span>Sổ Tay Câu Hỏi</span>
+              <span>Sổ tay câu hỏi</span>
               {userBookmarksCount > 0 && (
                 <span className="px-1.5 py-0.2 bg-amber-500 text-white rounded-full text-[10px] font-bold">
                   {userBookmarksCount}
@@ -113,7 +113,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <BarChart3 className="w-3.5 h-3.5" />
-              <span>Phân Tích Năng Lực</span>
+              <span>Phân tích năng lực</span>
             </button>
 
             {/* Teacher Studio Tab */}
@@ -126,7 +126,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Biên Soạn Giáo Viên</span>
+              <span>Biên soạn giáo viên</span>
             </button>
           </nav>
 
@@ -145,7 +145,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       : 'text-slate-600 hover:bg-slate-200'
                   }`}
                 >
-                  Học Sinh
+                  Học sinh
                 </button>
                 <button
                   onClick={() => switchDemoRole('teacher')}
@@ -155,7 +155,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       : 'text-slate-600 hover:bg-slate-200'
                   }`}
                 >
-                  Giáo Viên
+                  Giáo viên
                 </button>
               </div>
             )}
@@ -179,7 +179,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {currentUser.fullName}
                     </div>
                     <div className="text-[10px] text-slate-500">
-                      {currentUser.province} • {currentUser.role === 'teacher' ? 'GV Tin' : 'HS 12'}
+                      {currentUser.province} • {currentUser.role === 'teacher' ? 'GV Tin học' : 'Học sinh 12'}
                     </div>
                   </div>
                 </button>
@@ -198,13 +198,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={() => onOpenAuth('login')}
                   className="px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition-colors"
                 >
-                  Đăng Nhập
+                  Đăng nhập
                 </button>
                 <button
                   onClick={() => onOpenAuth('register')}
                   className="px-3.5 py-1.5 text-xs font-semibold text-white bg-indigo-700 hover:bg-indigo-800 rounded-xl transition-colors shadow-xs"
                 >
-                  Đăng Ký
+                  Đăng ký
                 </button>
               </div>
             )}
@@ -219,7 +219,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeTab === 'exams' ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-600'
             }`}
           >
-            Đề Thi
+            Đề thi
           </button>
           <button
             onClick={() => setActiveTab('theory')}
@@ -227,7 +227,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeTab === 'theory' ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-600'
             }`}
           >
-            Lý Thuyết
+            Lý thuyết
           </button>
           <button
             onClick={() => setActiveTab('notebook')}
@@ -235,7 +235,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeTab === 'notebook' ? 'bg-amber-50 text-amber-700 font-bold' : 'text-slate-600'
             }`}
           >
-            Sổ Tay ({userBookmarksCount})
+            Sổ tay ({userBookmarksCount})
           </button>
           <button
             onClick={() => setActiveTab('analytics')}
@@ -243,7 +243,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeTab === 'analytics' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-600'
             }`}
           >
-            Phân Tích
+            Phân tích
           </button>
           <button
             onClick={() => setActiveTab('teacher')}
@@ -251,7 +251,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeTab === 'teacher' ? 'bg-indigo-700 text-white font-bold' : 'text-indigo-700'
             }`}
           >
-            Biên Soạn
+            Biên soạn
           </button>
         </div>
       </div>

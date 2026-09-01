@@ -58,7 +58,7 @@ export const QuickTheoryModal: React.FC<QuickTheoryModalProps> = ({
           <div className="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4">
             <div className="flex items-center gap-2 text-indigo-900 font-bold text-xs uppercase tracking-wider mb-2.5">
               <Lightbulb className="w-4 h-4 text-indigo-600" />
-              <span>Điểm Kiến Thức Cốt Lõi Cần Nhớ:</span>
+              <span>Điểm kiến thức cốt lõi cần nhớ:</span>
             </div>
             <ul className="space-y-2">
               {lesson.keyTakeaways.map((point, idx) => (
@@ -75,7 +75,7 @@ export const QuickTheoryModal: React.FC<QuickTheoryModalProps> = ({
             <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4">
               <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider mb-2">
                 <AlertTriangle className="w-4 h-4 text-amber-600" />
-                <span>Mẹo Làm Bài & Cảnh Báo Bẫy Đề Thi:</span>
+                <span>Mẹo làm bài và cảnh báo bẫy đề thi:</span>
               </div>
               <ul className="space-y-1.5">
                 {lesson.examTips.map((tip, idx) => (

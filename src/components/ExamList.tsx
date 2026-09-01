@@ -50,25 +50,25 @@ export const ExamList: React.FC<ExamListProps> = ({ onOpenQuickTheory }) => {
         <div className="relative z-10 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-indigo-200 mb-3 border border-white/15">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Kỳ Thi Tốt Nghiệp THPT Môn Tin Học</span>
+            <span>Kỳ thi tốt nghiệp THPT môn Tin học</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Hệ Thống Đề Thi Thử & Luyện Tập Chuẩn Bộ GD&ĐT
+            Hệ thống đề thi thử và luyện tập chuẩn Bộ GD&ĐT
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-            Đề thi cấu trúc chuẩn: <strong>24 câu trắc nghiệm nhiều phương án (Phần I)</strong> và <strong>4 câu trắc nghiệm Đúng/Sai đa ý a-b-c-d (Phần II)</strong>. Tích hợp liên kết tham chiếu lý thuyết trực tiếp và chẩn đoán năng lực điểm mạnh/điểm yếu sau khi nộp bài.
+            Đề thi cấu trúc chuẩn: <strong>24 câu trắc nghiệm nhiều phương án (Phần I)</strong> và <strong>4 câu trắc nghiệm đúng/sai đa ý a-b-c-d (Phần II)</strong>. Tích hợp liên kết tham chiếu lý thuyết trực tiếp và chẩn đoán năng lực điểm mạnh/điểm yếu sau khi nộp bài.
           </p>
 
           {/* Quick Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
             <div className="bg-white/10 backdrop-blur-xs rounded-2xl p-3 border border-white/10">
               <div className="text-[11px] text-slate-300 font-medium">Thời gian làm bài</div>
-              <div className="text-lg font-bold text-white">50 Phút</div>
+              <div className="text-lg font-bold text-white">50 phút</div>
             </div>
             <div className="bg-white/10 backdrop-blur-xs rounded-2xl p-3 border border-white/10">
               <div className="text-[11px] text-slate-300 font-medium">Tổng thang điểm</div>
-              <div className="text-lg font-bold text-amber-300">10.0 Điểm</div>
+              <div className="text-lg font-bold text-amber-300">10.0 điểm</div>
             </div>
             <div className="bg-white/10 backdrop-blur-xs rounded-2xl p-3 border border-white/10">
               <div className="text-[11px] text-slate-300 font-medium">Cấu trúc đề</div>
@@ -76,7 +76,7 @@ export const ExamList: React.FC<ExamListProps> = ({ onOpenQuickTheory }) => {
             </div>
             <div className="bg-white/10 backdrop-blur-xs rounded-2xl p-3 border border-white/10">
               <div className="text-[11px] text-slate-300 font-medium">Ngân hàng câu hỏi</div>
-              <div className="text-lg font-bold text-emerald-400">{questionsBank.length}+ Câu</div>
+              <div className="text-lg font-bold text-emerald-400">{questionsBank.length}+ câu</div>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@ export const ExamList: React.FC<ExamListProps> = ({ onOpenQuickTheory }) => {
               selectedTrack === 'ALL' ? 'bg-indigo-700 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Tất Cả Phân Môn
+            Tất cả phân môn
           </button>
           <button
             onClick={() => setSelectedTrack('ICT')}
@@ -105,7 +105,7 @@ export const ExamList: React.FC<ExamListProps> = ({ onOpenQuickTheory }) => {
               selectedTrack === 'ICT' ? 'bg-indigo-700 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Tin Học Ứng Dụng (ICT)
+            Tin học ứng dụng (ICT)
           </button>
           <button
             onClick={() => setSelectedTrack('CS')}
@@ -113,7 +113,7 @@ export const ExamList: React.FC<ExamListProps> = ({ onOpenQuickTheory }) => {
               selectedTrack === 'CS' ? 'bg-indigo-700 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Khoa Học Máy Tính (CS)
+            Khoa học máy tính (CS)
           </button>
         </div>
 
@@ -133,7 +133,7 @@ export const ExamList: React.FC<ExamListProps> = ({ onOpenQuickTheory }) => {
               selectedCategory === 'OFFICIAL' ? 'bg-slate-800 text-white font-semibold' : 'text-slate-500 hover:bg-slate-100'
             }`}
           >
-            Đề Chuẩn Bộ GD&ĐT
+            Đề chuẩn Bộ GD&ĐT
           </button>
           <button
             onClick={() => setSelectedCategory('TOPIC')}
@@ -141,7 +141,7 @@ export const ExamList: React.FC<ExamListProps> = ({ onOpenQuickTheory }) => {
               selectedCategory === 'TOPIC' ? 'bg-slate-800 text-white font-semibold' : 'text-slate-500 hover:bg-slate-100'
             }`}
           >
-            Đề Chuyên Đề
+            Đề chuyên đề
           </button>
         </div>
       </div>
@@ -168,7 +168,7 @@ export const ExamList: React.FC<ExamListProps> = ({ onOpenQuickTheory }) => {
                       </span>
                     ) : (
                       <span className="px-2.5 py-0.5 text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-full">
-                        Đề Luyện Tập
+                        Đề luyện tập
                       </span>
                     )}
                   </div>
@@ -194,7 +194,7 @@ export const ExamList: React.FC<ExamListProps> = ({ onOpenQuickTheory }) => {
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-400 font-medium">Phần I (4 Lựa chọn)</div>
+                    <div className="text-[10px] text-slate-400 font-medium">Phần I (4 lựa chọn)</div>
                     <div className="font-bold text-slate-700">{part1Q} câu</div>
                   </div>
                   <div>
@@ -220,15 +220,15 @@ export const ExamList: React.FC<ExamListProps> = ({ onOpenQuickTheory }) => {
                   className="flex-1 py-2 px-3 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5"
                 >
                   <Play className="w-3.5 h-3.5" />
-                  <span>Vào Thi Thử (50p)</span>
+                  <span>Vào thi thử (50p)</span>
                 </button>
                 <button
                   onClick={() => startExam(exam, 'practice')}
-                  title="Luyện tập tự do, xem đáp án & lý thuyết tức thì"
+                  title="Luyện tập tự do, xem đáp án và lý thuyết tức thì"
                   className="py-2 px-3 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold rounded-xl transition-colors flex items-center gap-1"
                 >
                   <BookOpen className="w-3.5 h-3.5 text-indigo-700" />
-                  <span>Ôn Tập</span>
+                  <span>Ôn tập</span>
                 </button>
               </div>
             </div>

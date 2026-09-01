@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, UserRole } from '../types';
+import { dbApi } from '../lib/api';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -65,6 +66,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   });
 
+  // Load from SQLite on mount
+  useEffect(() => {
+    let isMounted = true;
+    dbApi.getUsers().then(remoteUsers => {
+      if (isMounted && remoteUsers && remoteUsers.length > 0) {
+        setUsers(remoteUsers);
+        // Sync active user if exists in DB
+        setCurrentUser(prev => {
+          if (!prev) return remoteUsers[0];
+          const matched = remoteUsers.find(u => u.id === prev.id);
+          return matched || prev;
+        });
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('tin_hoc_users', JSON.stringify(users));
   }, [users]);
@@ -78,21 +98,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [currentUser]);
 
   const login = async (username: string, password?: string): Promise<{ success: boolean; message?: string }> => {
-    const user = users.find(u => u.username.toLowerCase() === username.toLowerCase().trim());
-    if (!user) {
-      return { success: false, message: 'Tên đăng nhập không tồn tại trên hệ thống.' };
+    // Attempt SQLite server-side login
+    const res = await dbApi.login(username, password);
+    if (res.success && res.user) {
+      setCurrentUser(res.user);
+      setUsers(prev => {
+        const exists = prev.some(u => u.id === res.user!.id);
+        return exists ? prev.map(u => u.id === res.user!.id ? res.user! : u) : [res.user!, ...prev];
+      });
+      return { success: true };
     }
-    if (password && user.password && user.password !== password) {
+
+    // Local fallback if server unreachable
+    const localUser = users.find(u => u.username.toLowerCase() === username.toLowerCase().trim());
+    if (!localUser) {
+      return { success: false, message: res.message || 'Tên đăng nhập không tồn tại trên hệ thống.' };
+    }
+    if (password && localUser.password && localUser.password !== password) {
       return { success: false, message: 'Mật khẩu không chính xác.' };
     }
-    setCurrentUser(user);
+    setCurrentUser(localUser);
     return { success: true };
   };
 
   const register = async (userData: Omit<User, 'id' | 'createdAt'>): Promise<{ success: boolean; message?: string }> => {
+    // Attempt SQLite register
+    const res = await dbApi.register(userData);
+    if (res.success && res.user) {
+      setUsers(prev => [res.user!, ...prev]);
+      setCurrentUser(res.user);
+      return { success: true };
+    }
+
+    // Fallback local register
     const existing = users.find(u => u.username.toLowerCase() === userData.username.toLowerCase().trim());
     if (existing) {
-      return { success: false, message: 'Tên đăng nhập này đã được sử dụng. Vui lòng chọn tên khác.' };
+      return { success: false, message: res.message || 'Tên đăng nhập này đã được sử dụng. Vui lòng chọn tên khác.' };
     }
 
     const newUser: User = {
@@ -115,6 +156,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const updatedUser = { ...currentUser, ...updatedData };
     setCurrentUser(updatedUser);
     setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+
+    // Update SQLite
+    await dbApi.updateUser(currentUser.id, updatedData);
     return true;
   };
 
@@ -145,3 +189,4 @@ export const useAuth = () => {
   if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
+

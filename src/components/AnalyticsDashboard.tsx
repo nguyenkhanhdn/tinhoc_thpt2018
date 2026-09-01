@@ -82,11 +82,11 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-xs font-bold text-teal-200 mb-2">
               <BarChart3 className="w-3.5 h-3.5" />
-              <span>HỆ THỐNG PHÂN TÍCH NĂNG LỰC HỌC TẬP</span>
+              <span>Hệ thống phân tích năng lực học tập</span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Báo Cáo Tổng Hợp & Lộ Trình Ôn Luyện
+              Báo cáo tổng hợp và lộ trình ôn luyện
             </h1>
             <p className="text-xs sm:text-sm text-teal-100 mt-1 max-w-2xl">
               Hệ thống tự động phân tích dữ liệu các lần làm bài thi thử để chỉ ra chính xác các chuyên đề bạn đã nắm vững và các nội dung cần được củng cố.
@@ -96,7 +96,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           {/* Quick Target KPI */}
           {currentUser && currentUser.role === 'student' && (
             <div className="bg-white/10 backdrop-blur-xs rounded-2xl p-4 border border-white/20 text-center shrink-0 min-w-[180px]">
-              <div className="text-xs text-teal-200">MỤC TIÊU ĐIỂM SỐ THPT</div>
+              <div className="text-xs text-teal-200">Mục tiêu điểm số THPT</div>
               <div className="text-3xl font-black text-amber-300 my-1 font-mono">
                 {currentUser.targetScore || 9.0}
                 <span className="text-xs font-normal text-white/70"> / 10.0</span>
@@ -136,7 +136,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         <div className="bg-white rounded-2xl border border-emerald-200 p-6 shadow-xs">
           <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm mb-4">
             <Flame className="w-5 h-5 text-emerald-600" />
-            <span>Nội Dung Kiến Thức Mạnh (Đã Vững Vàng)</span>
+            <span>Nội dung kiến thức mạnh (Đã vững vàng)</span>
           </div>
 
           {strongTopics.length > 0 ? (
@@ -164,7 +164,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         <div className="bg-white rounded-2xl border border-rose-200 p-6 shadow-xs">
           <div className="flex items-center gap-2 text-rose-800 font-bold text-sm mb-4">
             <AlertTriangle className="w-5 h-5 text-rose-600" />
-            <span>Nội Dung Cần Được Củng Cố & Ưu Tiên Ôn Tập</span>
+            <span>Nội dung cần được củng cố và ưu tiên ôn tập</span>
           </div>
 
           {weakTopics.length > 0 ? (
@@ -205,7 +205,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-blue-600" />
-          <span>Mức Độ Nắm Vững Toàn Diện Các Phân Môn (Chương Trình Tin Học 12)</span>
+          <span>Mức độ nắm vững toàn diện các phân môn (Chương trình Tin học 12)</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -259,7 +259,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
           <Calendar className="w-4 h-4 text-blue-600" />
-          <span>Lịch Sử Các Bài Thi Đã Thực Hiện ({userResults.length})</span>
+          <span>Lịch sử các bài thi đã thực hiện ({userResults.length})</span>
         </h3>
 
         {userResults.length > 0 ? (

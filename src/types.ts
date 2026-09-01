@@ -20,6 +20,7 @@ export interface User {
   track?: 'ICT' | 'CS' | 'BOTH';
   createdAt: string;
   avatarUrl?: string;
+  className?: string;
 }
 
 export interface SubjectTopic {

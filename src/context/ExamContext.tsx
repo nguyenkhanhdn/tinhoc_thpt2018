@@ -4,6 +4,7 @@ import { INITIAL_EXAMS } from '../data/mockExams';
 import { INITIAL_QUESTIONS } from '../data/questionsBank';
 import { SUBJECT_TOPICS } from '../data/topicsAndLessons';
 import { useAuth } from './AuthContext';
+import { dbApi } from '../lib/api';
 
 interface ExamContextType {
   exams: Exam[];
@@ -94,6 +95,45 @@ export const ExamProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [examMode, setExamMode] = useState<'exam' | 'practice'>('exam');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  // Sync state from SQLite on initial load & user change
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadDataFromSqlite() {
+      try {
+        const [remoteQuestions, remoteExams, remoteResults, remoteBookmarks] = await Promise.all([
+          dbApi.getQuestions(),
+          dbApi.getExams(),
+          dbApi.getExamResults(currentUser?.id),
+          dbApi.getBookmarks(currentUser?.id)
+        ]);
+
+        if (isMounted) {
+          if (remoteQuestions && remoteQuestions.length > 0) {
+            setQuestionsBank(remoteQuestions);
+          }
+          if (remoteExams && remoteExams.length > 0) {
+            setExams(remoteExams);
+          }
+          if (remoteResults && remoteResults.length > 0) {
+            setExamResults(remoteResults);
+          }
+          if (remoteBookmarks && remoteBookmarks.length > 0) {
+            setBookmarks(remoteBookmarks);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not sync with SQLite database:', err);
+      }
+    }
+
+    loadDataFromSqlite();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentUser?.id]);
 
   useEffect(() => {
     localStorage.setItem('tin_hoc_exams', JSON.stringify(exams));
@@ -376,6 +416,11 @@ export const ExamProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCurrentResult(newResult);
     setIsSubmitting(false);
 
+    // Save to SQLite
+    dbApi.saveExamResult(newResult).catch(err => {
+      console.warn('Failed to save exam result to SQLite:', err);
+    });
+
     return newResult;
   };
 
@@ -408,6 +453,11 @@ export const ExamProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return [newBookmark, ...prev];
       }
     });
+
+    // Toggle in SQLite
+    dbApi.toggleBookmark(userId, question.id, note, masteryStatus).catch(err => {
+      console.warn('Failed to toggle bookmark in SQLite:', err);
+    });
   };
 
   const updateBookmark = (questionId: string, note: string, masteryStatus: MasteryStatus) => {
@@ -423,11 +473,21 @@ export const ExamProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       return b;
     }));
+
+    // Update in SQLite
+    dbApi.updateBookmark(userId, questionId, note, masteryStatus).catch(err => {
+      console.warn('Failed to update bookmark in SQLite:', err);
+    });
   };
 
   const removeBookmark = (questionId: string) => {
     const userId = currentUser?.id || 'user_student_1';
     setBookmarks(prev => prev.filter(b => !(b.questionId === questionId && b.userId === userId)));
+
+    // Remove in SQLite
+    dbApi.removeBookmark(userId, questionId).catch(err => {
+      console.warn('Failed to remove bookmark from SQLite:', err);
+    });
   };
 
   const isQuestionBookmarked = (questionId: string) => {
@@ -447,15 +507,31 @@ export const ExamProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: `q_${Date.now()}`
     };
     setQuestionsBank(prev => [newQ, ...prev]);
+
+    // Save to SQLite
+    dbApi.createQuestion(newQ).catch(err => {
+      console.warn('Failed to create question in SQLite:', err);
+    });
+
     return newQ;
   };
 
   const updateQuestionInBank = (id: string, questionData: Partial<Question>) => {
     setQuestionsBank(prev => prev.map(q => q.id === id ? { ...q, ...questionData } : q));
+
+    // Update in SQLite
+    dbApi.updateQuestion(id, questionData).catch(err => {
+      console.warn('Failed to update question in SQLite:', err);
+    });
   };
 
   const deleteQuestionFromBank = (id: string) => {
     setQuestionsBank(prev => prev.filter(q => q.id !== id));
+
+    // Delete in SQLite
+    dbApi.deleteQuestion(id).catch(err => {
+      console.warn('Failed to delete question in SQLite:', err);
+    });
   };
 
   const createExam = (examData: Omit<Exam, 'id' | 'createdAt'>): Exam => {
@@ -465,11 +541,22 @@ export const ExamProvider: React.FC<{ children: React.ReactNode }> = ({ children
       createdAt: new Date().toISOString().split('T')[0]
     };
     setExams(prev => [newExam, ...prev]);
+
+    // Save in SQLite
+    dbApi.createExam(newExam).catch(err => {
+      console.warn('Failed to save exam in SQLite:', err);
+    });
+
     return newExam;
   };
 
   const deleteExam = (examId: string) => {
     setExams(prev => prev.filter(e => e.id !== examId));
+
+    // Delete in SQLite
+    dbApi.deleteExam(examId).catch(err => {
+      console.warn('Failed to delete exam in SQLite:', err);
+    });
   };
 
   return (

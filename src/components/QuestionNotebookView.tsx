@@ -60,11 +60,11 @@ export const QuestionNotebookView: React.FC<QuestionNotebookViewProps> = ({ onOp
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-amber-100 mb-2">
             <Bookmark className="w-3.5 h-3.5 fill-current" />
-            <span>SỔ TAY CÂU HỎI CẦN NGHIÊN CỨU SÂU</span>
+            <span>Sổ tay câu hỏi cần nghiên cứu sâu</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Kho Câu Hỏi Khó & Cần Nghiền Ngẫm
+            Kho câu hỏi khó và cần nghiền ngẫm
           </h1>
           <p className="text-xs sm:text-sm text-amber-100 mt-1 max-w-2xl leading-relaxed">
             Nơi lưu trữ các câu hỏi bạn cần xem lại, kèm ghi chú riêng biệt và liên kết thẳng đến bài học lý thuyết tương ứng.
@@ -78,7 +78,7 @@ export const QuestionNotebookView: React.FC<QuestionNotebookViewProps> = ({ onOp
             className="px-5 py-3 bg-white hover:bg-amber-50 text-amber-900 font-extrabold text-xs sm:text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 shrink-0 group"
           >
             <Play className="w-4 h-4 text-amber-600 group-hover:scale-110 transition-transform" />
-            <span>Luyện Tập {userBookmarks.length} Câu Trong Sổ Tay</span>
+            <span>Luyện tập {userBookmarks.length} câu trong sổ tay</span>
           </button>
         )}
       </div>
@@ -141,7 +141,7 @@ export const QuestionNotebookView: React.FC<QuestionNotebookViewProps> = ({ onOp
                     {topic?.shortTitle}
                   </span>
                   <span className="text-xs font-semibold text-slate-600">
-                    {q.type === 'single_choice' ? 'Phần I (4 Lựa chọn)' : 'Phần II (Đúng/Sai)'}
+                    {q.type === 'single_choice' ? 'Phần I (4 lựa chọn)' : 'Phần II (Đúng/Sai)'}
                   </span>
                   
                   {/* Mastery Badge */}
@@ -163,7 +163,7 @@ export const QuestionNotebookView: React.FC<QuestionNotebookViewProps> = ({ onOp
                     className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5"
                   >
                     <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>Tham Khảo Lý Thuyết</span>
+                    <span>Tham khảo lý thuyết</span>
                   </button>
 
                   <button
@@ -236,7 +236,7 @@ export const QuestionNotebookView: React.FC<QuestionNotebookViewProps> = ({ onOp
                       onClick={() => handleSaveEdit(q.id)}
                       className="px-3.5 py-1 text-xs font-bold bg-amber-600 text-white rounded-lg hover:bg-amber-700"
                     >
-                      Lưu Ghi Chú
+                      Lưu ghi chú
                     </button>
                   </div>
                 </div>
@@ -254,7 +254,7 @@ export const QuestionNotebookView: React.FC<QuestionNotebookViewProps> = ({ onOp
               <div className="p-3 bg-slate-50 border border-slate-200/70 rounded-xl text-xs space-y-1">
                 <div className="font-bold text-slate-800 flex items-center gap-1">
                   <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Đáp án & Giải thích chi tiết:</span>
+                  <span>Đáp án và giải thích chi tiết:</span>
                 </div>
                 <p className="text-slate-600">{q.explanation}</p>
                 {lesson && (

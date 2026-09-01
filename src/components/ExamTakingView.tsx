@@ -131,7 +131,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                 <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
                   examMode === 'exam' ? 'bg-amber-500/30 text-amber-300 border border-amber-400/30' : 'bg-blue-500/30 text-blue-300 border border-blue-400/30'
                 }`}>
-                  {examMode === 'exam' ? 'Thi Thử (50p)' : 'Ôn Tập Tự Do'}
+                  {examMode === 'exam' ? 'Thi thử (50p)' : 'Ôn tập tự do'}
                 </span>
               </div>
             </div>
@@ -158,7 +158,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5"
             >
               <Send className="w-3.5 h-3.5" />
-              <span>Nộp Bài Thi</span>
+              <span>Nộp bài thi</span>
             </button>
           </div>
         </div>
@@ -181,7 +181,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                 <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-md ${
                   currentQ.type === 'single_choice' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-purple-50 text-purple-700 border border-purple-200'
                 }`}>
-                  {currentQ.type === 'single_choice' ? 'Phần I: 4 Lựa chọn (0.25đ)' : 'Phần II: Đúng / Sai 4 ý (1.0đ)'}
+                  {currentQ.type === 'single_choice' ? 'Phần I: 4 lựa chọn (0.25đ)' : 'Phần II: Đúng / Sai 4 ý (1.0đ)'}
                 </span>
 
                 <span className="px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-600 rounded-md">
@@ -199,7 +199,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                   title="Mở ngay bài học lý thuyết tham chiếu để tra cứu kiến thức"
                 >
                   <BookOpen className="w-3.5 h-3.5 text-indigo-700" />
-                  <span>Tham Khảo Lý Thuyết</span>
+                  <span>Tham khảo lý thuyết</span>
                 </button>
 
                 {/* ⭐ Lưu sổ tay câu hỏi khó */}
@@ -216,7 +216,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                       ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
                       : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-amber-50 hover:text-amber-700'
                   }`}
-                  title={isBookmarked ? 'Đã lưu vào Sổ tay câu hỏi khó' : 'Lưu câu hỏi này để nghiên cứu sâu'}
+                  title={isBookmarked ? 'Đã lưu vào sổ tay câu hỏi khó' : 'Lưu câu hỏi này để nghiên cứu sâu'}
                 >
                   <Bookmark className="w-4 h-4 fill-current" />
                 </button>
@@ -388,7 +388,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                 className="px-4 py-2 border border-slate-300 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-30 flex items-center gap-1"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span>Câu Trước</span>
+                <span>Câu trước</span>
               </button>
 
               <div className="text-xs text-slate-500">
@@ -400,7 +400,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                 disabled={activeQuestionIndex === currentExam.questions.length - 1}
                 className="px-4 py-2 bg-indigo-700 text-white text-xs font-semibold rounded-xl hover:bg-indigo-800 transition-colors disabled:opacity-30 flex items-center gap-1 shadow-xs"
               >
-                <span>Câu Tiếp</span>
+                <span>Câu tiếp</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -414,7 +414,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
             {/* Palette Header */}
             <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                Bảng Câu Hỏi ({currentExam.questions.length})
+                Bảng câu hỏi ({currentExam.questions.length})
               </h3>
               <span className="text-[11px] font-bold text-indigo-700">
                 Tiến độ: {Math.round((answeredCount / currentExam.questions.length) * 100)}%
@@ -475,7 +475,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                 className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
-                <span>Nộp Bài và Xem Kết Quả</span>
+                <span>Nộp bài và xem kết quả</span>
               </button>
             </div>
           </div>
@@ -491,7 +491,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
             </div>
 
             <h3 className="text-base font-bold text-slate-900 text-center mb-1">
-              Xác Nhận Nộp Bài Thi
+              Xác nhận nộp bài thi
             </h3>
             <p className="text-xs text-slate-500 text-center mb-4">
               Bạn có chắc chắn muốn kết thúc bài thi và nhận phân tích chẩn đoán năng lực?
@@ -520,7 +520,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                 onClick={() => setShowSubmitConfirm(false)}
                 className="flex-1 py-2.5 border border-slate-300 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors"
               >
-                Tiếp Tục Làm Bài
+                Tiếp tục làm bài
               </button>
               <button
                 type="button"
@@ -531,7 +531,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                 }}
                 className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors disabled:opacity-50"
               >
-                {isSubmitting ? 'Đang chấm điểm...' : 'Đồng Ý Nộp Bài'}
+                {isSubmitting ? 'Đang chấm điểm...' : 'Đồng ý nộp bài'}
               </button>
             </div>
           </div>
@@ -545,7 +545,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2 text-amber-700 font-bold text-sm">
                 <Bookmark className="w-5 h-5 fill-amber-500" />
-                <span>Lưu Vào Sổ Tay Nghiên Cứu Sâu</span>
+                <span>Lưu vào sổ tay nghiên cứu sâu</span>
               </div>
               <button onClick={() => setShowNoteModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-4 h-4" />
@@ -559,7 +559,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
             <textarea
               value={noteText}
               onChange={(e) => setNoteText(e.target.value)}
-              placeholder="ví dụ: Cần xem lại cú pháp lệnh GROUP BY và HAVING trong SQL..."
+              placeholder="Ví dụ: Cần xem lại cú pháp lệnh GROUP BY và HAVING trong SQL..."
               rows={3}
               className="w-full p-3 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-hidden mb-4"
             />
@@ -577,7 +577,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                 onClick={handleSaveBookmarkWithNote}
                 className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-xs"
               >
-                Lưu Câu Hỏi
+                Lưu câu hỏi
               </button>
             </div>
           </div>

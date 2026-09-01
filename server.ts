@@ -1,8 +1,36 @@
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
+import {
+  getDatabase,
+  getDbStats,
+  resetDatabaseToDefaults,
+  getAllUsers,
+  getUserByUsername,
+  getUserById,
+  createUser,
+  updateUser,
+  getAllTopics,
+  getAllLessons,
+  createLesson,
+  updateLesson,
+  deleteLesson,
+  getAllQuestions,
+  createQuestion,
+  updateQuestion,
+  deleteQuestion,
+  getAllExams,
+  createExam,
+  deleteExam,
+  getAllExamResults,
+  createExamResult,
+  getBookmarks,
+  toggleBookmark,
+  updateBookmark,
+  removeBookmark
+} from "./server/db.js";
 
 dotenv.config();
 
@@ -22,14 +50,303 @@ function getAI(): GoogleGenAI | null {
 }
 
 async function startServer() {
+  // Pre-initialize SQLite Database
+  try {
+    await getDatabase();
+    console.log("SQLite database initialized successfully.");
+  } catch (err) {
+    console.error("Failed to initialize SQLite database:", err);
+  }
+
   const app = express();
   const PORT = 3000;
 
   app.use(express.json({ limit: "10mb" }));
 
+  // ==================== SQLITE DB API ROUTES ====================
+
+  // 1. Database Health & Stats
+  app.get("/api/db/stats", async (req, res) => {
+    try {
+      const stats = await getDbStats();
+      res.json({ success: true, dbType: "sqlite3", stats });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/db/reset", async (req, res) => {
+    try {
+      const stats = await resetDatabaseToDefaults();
+      res.json({ success: true, message: "Database reset to defaults successfully", stats });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 2. Users & Auth API
+  app.get("/api/users", async (req, res) => {
+    try {
+      const users = await getAllUsers();
+      res.json({ success: true, data: users });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/users/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      if (!username) {
+        return res.status(400).json({ success: false, message: "Tên đăng nhập không được để trống." });
+      }
+      const user = await getUserByUsername(username);
+      if (!user) {
+        return res.status(404).json({ success: false, message: "Tên đăng nhập không tồn tại trong cơ sở dữ liệu SQLite." });
+      }
+      if (password && user.password && user.password !== password) {
+        return res.status(401).json({ success: false, message: "Mật khẩu không chính xác." });
+      }
+      res.json({ success: true, data: user });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/users/register", async (req, res) => {
+    try {
+      const userData = req.body;
+      const existing = await getUserByUsername(userData.username);
+      if (existing) {
+        return res.status(409).json({ success: false, message: "Tên đăng nhập đã tồn tại trong cơ sở dữ liệu SQLite." });
+      }
+      const newUser = {
+        ...userData,
+        id: userData.id || `user_${Date.now()}`,
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+      const created = await createUser(newUser);
+      res.json({ success: true, data: created });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.put("/api/users/:id", async (req, res) => {
+    try {
+      const updated = await updateUser(req.params.id, req.body);
+      if (!updated) {
+        return res.status(404).json({ success: false, message: "Không tìm thấy người dùng." });
+      }
+      res.json({ success: true, data: updated });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 3. Topics & Lessons API
+  app.get("/api/topics", async (req, res) => {
+    try {
+      const topics = await getAllTopics();
+      res.json({ success: true, data: topics });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.get("/api/lessons", async (req, res) => {
+    try {
+      const lessons = await getAllLessons();
+      res.json({ success: true, data: lessons });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/lessons", async (req, res) => {
+    try {
+      const lessonData = req.body;
+      const newLesson = {
+        ...lessonData,
+        id: lessonData.id || `lesson_${Date.now()}`,
+        updatedAt: new Date().toISOString().split('T')[0]
+      };
+      const created = await createLesson(newLesson);
+      res.json({ success: true, data: created });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.put("/api/lessons/:id", async (req, res) => {
+    try {
+      const updated = await updateLesson(req.params.id, req.body);
+      if (!updated) {
+        return res.status(404).json({ success: false, message: "Không tìm thấy bài học." });
+      }
+      res.json({ success: true, data: updated });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.delete("/api/lessons/:id", async (req, res) => {
+    try {
+      await deleteLesson(req.params.id);
+      res.json({ success: true, message: "Đã xóa bài học khỏi SQLite." });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 4. Questions API
+  app.get("/api/questions", async (req, res) => {
+    try {
+      const questions = await getAllQuestions();
+      res.json({ success: true, data: questions });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/questions", async (req, res) => {
+    try {
+      const questionData = req.body;
+      const newQ = {
+        ...questionData,
+        id: questionData.id || `q_${Date.now()}`
+      };
+      const created = await createQuestion(newQ);
+      res.json({ success: true, data: created });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.put("/api/questions/:id", async (req, res) => {
+    try {
+      const updated = await updateQuestion(req.params.id, req.body);
+      if (!updated) {
+        return res.status(404).json({ success: false, message: "Không tìm thấy câu hỏi." });
+      }
+      res.json({ success: true, data: updated });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.delete("/api/questions/:id", async (req, res) => {
+    try {
+      await deleteQuestion(req.params.id);
+      res.json({ success: true, message: "Đã xóa câu hỏi khỏi SQLite." });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 5. Exams API
+  app.get("/api/exams", async (req, res) => {
+    try {
+      const exams = await getAllExams();
+      res.json({ success: true, data: exams });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/exams", async (req, res) => {
+    try {
+      const examData = req.body;
+      const newExam = {
+        ...examData,
+        id: examData.id || `exam_${Date.now()}`,
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+      const created = await createExam(newExam);
+      res.json({ success: true, data: created });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.delete("/api/exams/:id", async (req, res) => {
+    try {
+      await deleteExam(req.params.id);
+      res.json({ success: true, message: "Đã xóa đề thi khỏi SQLite." });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 6. Exam Results API
+  app.get("/api/exam-results", async (req, res) => {
+    try {
+      const userId = req.query.userId as string | undefined;
+      const results = await getAllExamResults(userId);
+      res.json({ success: true, data: results });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/exam-results", async (req, res) => {
+    try {
+      const resultData = req.body;
+      const newResult = {
+        ...resultData,
+        id: resultData.id || `res_${Date.now()}`
+      };
+      const created = await createExamResult(newResult);
+      res.json({ success: true, data: created });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  // 7. Bookmarks API
+  app.get("/api/bookmarks", async (req, res) => {
+    try {
+      const userId = req.query.userId as string | undefined;
+      const bookmarks = await getBookmarks(userId);
+      res.json({ success: true, data: bookmarks });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/bookmarks/toggle", async (req, res) => {
+    try {
+      const { userId, questionId, note, masteryStatus } = req.body;
+      const result = await toggleBookmark(userId || 'user_student_1', questionId, note, masteryStatus);
+      res.json({ success: true, ...result });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.put("/api/bookmarks", async (req, res) => {
+    try {
+      const { userId, questionId, note, masteryStatus } = req.body;
+      await updateBookmark(userId || 'user_student_1', questionId, note, masteryStatus);
+      res.json({ success: true, message: "Đã cập nhật ghi chú sổ tay trong SQLite." });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.delete("/api/bookmarks", async (req, res) => {
+    try {
+      const { userId, questionId } = req.body;
+      await removeBookmark(userId || 'user_student_1', questionId);
+      res.json({ success: true, message: "Đã xóa câu hỏi khỏi sổ tay SQLite." });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
   // Health check
   app.get("/api/health", (req, res) => {
-    res.json({ status: "ok", aiAvailable: !!process.env.GEMINI_API_KEY });
+    res.json({ status: "ok", aiAvailable: !!process.env.GEMINI_API_KEY, db: "sqlite3" });
   });
 
   // AI Endpoint: Generate Question for Informatics Exam

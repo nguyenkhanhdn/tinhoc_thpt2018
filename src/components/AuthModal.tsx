@@ -98,10 +98,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
             </div>
             <div>
               <h2 className="text-xl font-bold">
-                {mode === 'login' ? 'Đăng Nhập Tài Khoản' : 'Đăng Ký Thành Viên Mới'}
+                {mode === 'login' ? 'Đăng nhập tài khoản' : 'Đăng ký thành viên mới'}
               </h2>
               <p className="text-blue-100 text-xs mt-0.5">
-                Hệ thống Ôn thi & Thi thử Tốt nghiệp THPT Môn Tin học
+                Hệ thống ôn thi và thi thử tốt nghiệp THPT môn Tin học
               </p>
             </div>
           </div>
@@ -115,7 +115,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                 mode === 'login' ? 'bg-white text-blue-900 shadow-xs' : 'text-blue-100 hover:text-white'
               }`}
             >
-              Đăng Nhập
+              Đăng nhập
             </button>
             <button
               type="button"
@@ -124,7 +124,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                 mode === 'register' ? 'bg-white text-blue-900 shadow-xs' : 'text-blue-100 hover:text-white'
               }`}
             >
-              Đăng Ký Tài Khoản
+              Đăng ký tài khoản
             </button>
           </div>
         </div>
@@ -149,7 +149,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="ví dụ: hocsinh12 hoặc giaovien_tin"
+                    placeholder="Ví dụ: hocsinh12 hoặc giaovien_tin"
                     className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
                   />
                 </div>
@@ -176,7 +176,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                   disabled={isLoading}
                   className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl transition-colors shadow-sm disabled:opacity-50"
                 >
-                  {isLoading ? 'Đang xác thực...' : 'Đăng Nhập Ngay'}
+                  {isLoading ? 'Đang xác thực...' : 'Đăng nhập ngay'}
                 </button>
               </div>
 
@@ -189,7 +189,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                     onClick={() => { setUsername('hocsinh12'); setPassword('123'); }}
                     className="p-2 text-xs bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-lg text-slate-700 text-left transition-colors"
                   >
-                    <div className="font-semibold text-blue-700">Học Sinh Mẫu</div>
+                    <div className="font-semibold text-blue-700">Học sinh mẫu</div>
                     <div className="text-[11px] text-slate-500">hocsinh12 / 123</div>
                   </button>
                   <button
@@ -197,7 +197,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                     onClick={() => { setUsername('giaovien_tin'); setPassword('123'); }}
                     className="p-2 text-xs bg-slate-50 hover:bg-purple-50 border border-slate-200 rounded-lg text-slate-700 text-left transition-colors"
                   >
-                    <div className="font-semibold text-purple-700">Giáo Viên Tin Học</div>
+                    <div className="font-semibold text-purple-700">Giáo viên Tin học</div>
                     <div className="text-[11px] text-slate-500">giaovien_tin / 123</div>
                   </button>
                 </div>
@@ -219,7 +219,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                     }`}
                   >
                     <GraduationCap className="w-4 h-4" />
-                    Học Sinh Luyện Thi
+                    Học sinh luyện thi
                   </button>
                   <button
                     type="button"
@@ -231,7 +231,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                     }`}
                   >
                     <ShieldCheck className="w-4 h-4" />
-                    Giáo Viên Biên Soạn
+                    Giáo viên biên soạn
                   </button>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="ví dụ: quannm12a"
+                    placeholder="Ví dụ: quannm12a"
                     className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-hidden"
                   />
                 </div>
@@ -396,7 +396,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                   className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-4 h-4" />
-                  {isLoading ? 'Đang tạo tài khoản...' : 'Hoàn Tất Đăng Ký'}
+                  {isLoading ? 'Đang tạo tài khoản...' : 'Hoàn tất đăng ký'}
                 </button>
               </div>
             </form>

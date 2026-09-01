@@ -96,7 +96,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-xs font-bold text-white mb-3">
               <Award className="w-4 h-4 text-amber-300" />
-              <span>BÁO CÁO KẾT QUẢ & CHẨN ĐOÁN NĂNG LỰC</span>
+              <span>Báo cáo kết quả và chẩn đoán năng lực</span>
             </div>
 
             <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight">
@@ -109,7 +109,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
 
           {/* Main Score Capsule */}
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 text-center min-w-[200px] shrink-0">
-            <div className="text-xs text-white/80 font-medium">TỔNG ĐIỂM ĐẠT ĐƯỢC</div>
+            <div className="text-xs text-white/80 font-medium">Tổng điểm đạt được</div>
             <div className="text-4xl sm:text-5xl font-black text-amber-300 my-1 font-mono tracking-tight">
               {currentResult.score.toFixed(2)}
               <span className="text-sm font-normal text-white/70"> / 10.0</span>
@@ -161,7 +161,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
             }`}
           >
             <BrainCircuit className="w-4 h-4" />
-            <span>Phân Tích Năng Lực & Chẩn Đoán Củng Cố</span>
+            <span>Phân tích năng lực và chẩn đoán củng cố</span>
           </button>
           
           <button
@@ -173,7 +173,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>Xem Chi Tiết Từng Câu & Tham Chiếu Lý Thuyết</span>
+            <span>Xem chi tiết từng câu và tham chiếu lý thuyết</span>
           </button>
         </div>
 
@@ -184,13 +184,13 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
             className="px-3.5 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Làm Lại Đề Này</span>
+            <span className="hidden sm:inline">Làm lại đề này</span>
           </button>
           <button
             onClick={onGoToExams}
             className="px-3.5 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded-xl hover:bg-slate-900 transition-colors"
           >
-            Danh Sách Đề Thi
+            Danh sách đề thi
           </button>
         </div>
       </div>
@@ -208,7 +208,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                 <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
                   <Flame className="w-4 h-4" />
                 </div>
-                <span>Nội Dung Kiến Thức Nắm Chắc (Điểm Mạnh)</span>
+                <span>Nội dung kiến thức nắm chắc (Điểm mạnh)</span>
               </div>
 
               {currentResult.strongTopics.length > 0 ? (
@@ -238,7 +238,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                 <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700">
                   <AlertTriangle className="w-4 h-4" />
                 </div>
-                <span>Nội Dung Cần Được Củng Cố & Tập Trung (Điểm Cần Khắc Phục)</span>
+                <span>Nội dung cần được củng cố và tập trung (Điểm cần khắc phục)</span>
               </div>
 
               {currentResult.weakTopics.length > 0 ? (
@@ -268,7 +268,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
             <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-blue-600" />
-              <span>Phân Tích Chi Tiết Tỷ Lệ Làm Đúng Theo Từng Chủ Đề (A - G)</span>
+              <span>Phân tích chi tiết tỷ lệ làm đúng theo từng chủ đề (A - G)</span>
             </h3>
 
             <div className="space-y-4">
@@ -314,7 +314,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
             <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-2xl p-6 shadow-xs space-y-4">
               <div className="flex items-center gap-2 text-indigo-900 font-bold text-sm">
                 <Sparkles className="w-5 h-5 text-indigo-600" />
-                <span>Lời Khuyên & Lộ Trình Củng Cố Của Trợ Lý Giáo Viên</span>
+                <span>Lời khuyên và lộ trình củng cố của trợ lý giáo viên</span>
               </div>
 
               <p className="text-xs text-indigo-950 leading-relaxed font-medium">
@@ -415,7 +415,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                       </span>
 
                       <span className="text-xs font-semibold text-slate-600">
-                        {q.type === 'single_choice' ? 'Phần I: 4 Lựa chọn' : 'Phần II: Đúng/Sai 4 ý'}
+                        {q.type === 'single_choice' ? 'Phần I: 4 lựa chọn' : 'Phần II: Đúng/Sai 4 ý'}
                       </span>
                     </div>
 
@@ -429,10 +429,10 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                         title="Mở bài học lý thuyết tương ứng với câu hỏi này"
                       >
                         <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-                        <span>Tham Khảo Lý Thuyết</span>
+                        <span>Tham khảo lý thuyết</span>
                       </button>
 
-                      {/* ⭐ Lưu vào Sổ tay nghiên cứu sâu */}
+                      {/* ⭐ Lưu vào sổ tay nghiên cứu sâu */}
                       <button
                         onClick={() => {
                           if (isBookmarked) {
@@ -552,7 +552,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                   <div className="p-4 bg-indigo-50/80 border border-indigo-100 rounded-xl text-xs text-indigo-950 space-y-1.5">
                     <div className="flex items-center gap-1.5 font-bold text-indigo-900">
                       <HelpCircle className="w-4 h-4 text-indigo-600" />
-                      <span>Hướng Dẫn Giải & Phân Tích:</span>
+                      <span>Hướng dẫn giải và phân tích:</span>
                     </div>
                     <p className="leading-relaxed text-slate-700">{q.explanation}</p>
                     
@@ -577,7 +577,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2 text-amber-700 font-bold text-sm">
                 <Bookmark className="w-5 h-5 fill-amber-500" />
-                <span>Lưu Vào Sổ Tay Nghiên Cứu Sâu</span>
+                <span>Lưu vào sổ tay nghiên cứu sâu</span>
               </div>
               <button onClick={() => setBookmarkingQuestionId(null)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-4 h-4" />
@@ -591,7 +591,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
             <textarea
               value={bookmarkNote}
               onChange={(e) => setBookmarkNote(e.target.value)}
-              placeholder="ví dụ: Cần xem lại cú pháp lệnh GROUP BY và HAVING trong SQL..."
+              placeholder="Ví dụ: Cần xem lại cú pháp lệnh GROUP BY và HAVING trong SQL..."
               rows={3}
               className="w-full p-3 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-hidden mb-4"
             />
@@ -609,7 +609,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                 onClick={handleSaveBookmarkWithNote}
                 className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-xs"
               >
-                Lưu Câu Hỏi
+                Lưu câu hỏi
               </button>
             </div>
           </div>

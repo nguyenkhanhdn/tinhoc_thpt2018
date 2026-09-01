@@ -95,15 +95,15 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="px-2.5 py-0.5 text-[10px] font-bold bg-white/10 text-indigo-200 border border-white/15 rounded-full">
-                THƯ VIỆN SỐ HÓA
+                Thư viện số hóa
               </span>
-              <span className="text-xs text-slate-300">Chuẩn Chương trình GDPT 2018</span>
+              <span className="text-xs text-slate-300">Chuẩn chương trình GDPT 2018</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Hệ Thống Kiến Thức Trọng Tâm Tin Học 12
+              Hệ thống kiến thức trọng tâm Tin học 12
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              Tra cứu nhanh lý thuyết, sơ đồ tư duy, cú pháp Python / SQL, mẹo tránh bẫy đề thi Tốt nghiệp THPT Quốc gia theo từng chủ đề A, B, D, E, F, G.
+              Tra cứu nhanh lý thuyết, sơ đồ tư duy, cú pháp Python / SQL, mẹo tránh bẫy đề thi tốt nghiệp THPT theo từng chủ đề A, B, D, E, F, G.
             </p>
           </div>
 
@@ -158,7 +158,7 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
         <div className="lg:col-span-4 space-y-3">
           <div className="flex items-center justify-between px-1">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600">
-              Danh Sách Bài Học ({filteredLessons.length})
+              Danh sách bài học ({filteredLessons.length})
             </h2>
             <div className="flex gap-1 text-[11px]">
               <button
@@ -249,7 +249,7 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
                     className="px-3.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-semibold rounded-xl transition-all shadow-xs flex items-center gap-1.5"
                   >
                     <PlayCircle className="w-4 h-4" />
-                    <span>Luyện Tập Câu Hỏi Bài Này</span>
+                    <span>Luyện tập câu hỏi bài này</span>
                   </button>
                 </div>
 
@@ -268,7 +268,7 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
                 <div className="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4">
                   <div className="flex items-center gap-2 text-indigo-900 font-bold text-xs uppercase tracking-wider mb-2.5">
                     <Lightbulb className="w-4 h-4 text-indigo-700" />
-                    <span>Trọng Tâm Kiến Thức Cần Nắm Chắc:</span>
+                    <span>Trọng tâm kiến thức cần nắm chắc:</span>
                   </div>
                   <ul className="space-y-2">
                     {activeLesson.keyTakeaways.map((point, idx) => (
@@ -285,7 +285,7 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
                   <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4">
                     <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider mb-2">
                       <AlertTriangle className="w-4 h-4 text-amber-600" />
-                      <span>Mẹo Làm Bài & Cảnh Báo Bẫy Đề Thi:</span>
+                      <span>Mẹo làm bài và cảnh báo bẫy đề thi:</span>
                     </div>
                     <ul className="space-y-1.5">
                       {activeLesson.examTips.map((tip, idx) => (
@@ -333,7 +333,7 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
                     onClick={() => handleStartPracticeForLesson(activeLesson)}
                     className="px-4 py-2 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-xl transition-colors shadow-xs shrink-0"
                   >
-                    Bắt Đầu Luyện Tập
+                    Bắt đầu luyện tập
                   </button>
                 </div>
               </div>

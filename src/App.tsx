@@ -152,11 +152,11 @@ const MainAppContent: React.FC = () => {
       <footer className="bg-white border-t border-slate-200/80 py-6 mt-12 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800">TIN HỌC THPT 2025</span>
-            <span>• Hệ thống ôn thi & khảo sát chất lượng tốt nghiệp quốc gia</span>
+            <span className="font-bold text-slate-800">Tin học THPT 2025</span>
+            <span>• Hệ thống ôn thi và khảo sát chất lượng tốt nghiệp quốc gia</span>
           </div>
           <div>
-            Bám sát chương trình GDPT 2018 & Định dạng đề thi Bộ Giáo dục và Đào tạo
+            Bám sát chương trình GDPT 2018 và định dạng đề thi Bộ Giáo dục và Đào tạo
           </div>
         </div>
       </footer>
