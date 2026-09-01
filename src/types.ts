@@ -162,3 +162,45 @@ export interface BookmarkNote {
   createdAt: string;
   updatedAt: string;
 }
+
+export type LeaderboardPeriod = 'this_week' | 'last_week' | 'all_time';
+export type LeaderboardTrackFilter = 'ALL' | 'ICT' | 'CS';
+
+export interface WeeklyBadge {
+  id: string;
+  title: string;
+  icon: string;
+  description: string;
+  bgGradient: string;
+  textColor: string;
+  borderColor: string;
+}
+
+export interface WeeklyLeaderboardEntry {
+  rank: number;
+  previousRank?: number;
+  userId: string;
+  username: string;
+  fullName: string;
+  avatarUrl?: string;
+  className?: string;
+  province?: string;
+  track?: 'ICT' | 'CS' | 'BOTH';
+  
+  // Weekly Performance Metrics
+  totalCorrectQuestions: number;
+  totalQuestionsAnswered: number;
+  accuracyRate: number; // percentage, e.g. 96.5
+  totalTimeSpentSeconds: number;
+  averageTimePerExamSeconds: number;
+  examsCompletedCount: number;
+  totalScoreSum: number;
+  averageScore: number;
+  
+  // Gamification & Streak
+  streakDays: number;
+  xpPoints: number;
+  weeklyBadges: WeeklyBadge[];
+  lastActive: string;
+  isCurrentUser?: boolean;
+}

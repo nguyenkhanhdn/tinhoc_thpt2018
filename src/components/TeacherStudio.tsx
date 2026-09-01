@@ -280,6 +280,20 @@ export const TeacherStudio: React.FC = () => {
     setActiveTab('questions');
   };
 
+  if (!currentUser || currentUser.role !== 'teacher') {
+    return (
+      <div className="max-w-xl mx-auto my-16 p-8 bg-white rounded-3xl border border-slate-200 shadow-md text-center">
+        <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <AlertCircle className="w-8 h-8" />
+        </div>
+        <h2 className="text-lg font-bold text-slate-900 mb-2">Quyền truy cập bị giới hạn</h2>
+        <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+          Chức năng quản lý ngân hàng đề thi và câu hỏi chỉ dành riêng cho tài khoản có vai trò <strong>Giáo viên</strong>.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       

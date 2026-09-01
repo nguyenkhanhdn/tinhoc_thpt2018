@@ -12,12 +12,13 @@ import {
   User, 
   ShieldAlert, 
   Sparkles,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Trophy
 } from 'lucide-react';
 
 interface NavbarProps {
-  activeTab: 'exams' | 'theory' | 'notebook' | 'analytics' | 'teacher';
-  setActiveTab: (tab: 'exams' | 'theory' | 'notebook' | 'analytics' | 'teacher') => void;
+  activeTab: 'exams' | 'theory' | 'notebook' | 'analytics' | 'leaderboard' | 'teacher';
+  setActiveTab: (tab: 'exams' | 'theory' | 'notebook' | 'analytics' | 'leaderboard' | 'teacher') => void;
   onOpenAuth: (mode?: 'login' | 'register') => void;
   onOpenProfile: () => void;
 }
@@ -116,51 +117,40 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>Phân tích năng lực</span>
             </button>
 
-            {/* Teacher Studio Tab */}
+            {/* Weekly Leaderboard Tab */}
             <button
-              onClick={() => setActiveTab('teacher')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'teacher'
-                  ? 'bg-indigo-700 text-white font-bold shadow-xs'
-                  : 'text-indigo-700 hover:bg-indigo-50'
+              onClick={() => setActiveTab('leaderboard')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all relative ${
+                activeTab === 'leaderboard'
+                  ? 'bg-amber-400 text-amber-950 font-black shadow-xs ring-1 ring-amber-400'
+                  : 'text-amber-800 hover:bg-amber-50 hover:text-amber-950'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Biên soạn giáo viên</span>
+              <Trophy className="w-3.5 h-3.5 text-amber-600" />
+              <span>Bảng xếp hạng</span>
+              <span className="px-1 py-0.2 bg-rose-500 text-white rounded-full text-[9px] font-black uppercase tracking-tight">
+                Tuần
+              </span>
             </button>
+
+            {/* Teacher Studio Tab - Only visible and active for Teacher role */}
+            {currentUser?.role === 'teacher' && (
+              <button
+                onClick={() => setActiveTab('teacher')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === 'teacher'
+                    ? 'bg-indigo-700 text-white font-bold shadow-xs'
+                    : 'text-indigo-700 hover:bg-indigo-50'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Biên soạn giáo viên</span>
+              </button>
+            )}
           </nav>
 
-          {/* Right Action: User Menu & Role Switch */}
+          {/* Right Action: User Menu */}
           <div className="flex items-center gap-2">
-            
-            {/* Quick Demo Switcher */}
-            {isAuthenticated && currentUser && (
-              <div className="hidden lg:flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl p-1 text-[11px]">
-                <span className="text-slate-500 px-1 font-medium">Vai trò:</span>
-                <button
-                  onClick={() => switchDemoRole('student')}
-                  className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
-                    currentUser.role === 'student'
-                      ? 'bg-indigo-700 text-white font-bold shadow-xs'
-                      : 'text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  Học sinh
-                </button>
-                <button
-                  onClick={() => switchDemoRole('teacher')}
-                  className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
-                    currentUser.role === 'teacher'
-                      ? 'bg-indigo-700 text-white font-bold shadow-xs'
-                      : 'text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  Giáo viên
-                </button>
-              </div>
-            )}
-
-            {/* User Profile Button or Login */}
             {isAuthenticated && currentUser ? (
               <div className="flex items-center gap-2">
                 <button
@@ -246,13 +236,23 @@ export const Navbar: React.FC<NavbarProps> = ({
             Phân tích
           </button>
           <button
-            onClick={() => setActiveTab('teacher')}
+            onClick={() => setActiveTab('leaderboard')}
             className={`px-2.5 py-1 text-xs font-medium rounded-lg ${
-              activeTab === 'teacher' ? 'bg-indigo-700 text-white font-bold' : 'text-indigo-700'
+              activeTab === 'leaderboard' ? 'bg-amber-100 text-amber-900 font-bold' : 'text-amber-800'
             }`}
           >
-            Biên soạn
+            🏆 Xếp hạng
           </button>
+          {currentUser?.role === 'teacher' && (
+            <button
+              onClick={() => setActiveTab('teacher')}
+              className={`px-2.5 py-1 text-xs font-medium rounded-lg ${
+                activeTab === 'teacher' ? 'bg-indigo-700 text-white font-bold' : 'text-indigo-700'
+              }`}
+            >
+              Biên soạn
+            </button>
+          )}
         </div>
       </div>
     </header>

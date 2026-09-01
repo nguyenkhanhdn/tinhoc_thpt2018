@@ -17,19 +17,22 @@ import {
   Sparkles,
   Flame,
   BrainCircuit,
-  X
+  X,
+  Trophy
 } from 'lucide-react';
 
 interface ExamResultViewProps {
   onOpenQuickTheory: (lessonId: string) => void;
   onGoToNotebook: () => void;
   onGoToExams: () => void;
+  onGoToLeaderboard?: () => void;
 }
 
 export const ExamResultView: React.FC<ExamResultViewProps> = ({
   onOpenQuickTheory,
   onGoToNotebook,
-  onGoToExams
+  onGoToExams,
+  onGoToLeaderboard
 }) => {
   const { currentResult, currentExam, startExam, toggleBookmark, isQuestionBookmarked } = useExam();
   const { topics, getLessonById } = useTheory();
@@ -179,6 +182,15 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
+          {onGoToLeaderboard && (
+            <button
+              onClick={onGoToLeaderboard}
+              className="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-amber-950 text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <Trophy className="w-3.5 h-3.5" />
+              <span>Xem Bảng xếp hạng tuần</span>
+            </button>
+          )}
           <button
             onClick={() => startExam(currentExam, 'practice')}
             className="px-3.5 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5"

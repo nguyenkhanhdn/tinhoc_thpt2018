@@ -9,16 +9,18 @@ import { ExamResultView } from './components/ExamResultView';
 import { TheoryHub } from './components/TheoryHub';
 import { QuestionNotebookView } from './components/QuestionNotebookView';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
+import { LeaderboardView } from './components/LeaderboardView';
 import { TeacherStudio } from './components/TeacherStudio';
 import { AuthModal } from './components/AuthModal';
 import { ProfileModal } from './components/ProfileModal';
 import { QuickTheoryModal } from './components/QuickTheoryModal';
 
 const MainAppContent: React.FC = () => {
+  const { currentUser } = useAuth();
   const { isExamRunning, currentResult, setCurrentResult, resetExamState } = useExam();
   const { quickTheoryModalId, setQuickTheoryModalId } = useTheory();
 
-  const [activeTab, setActiveTab] = useState<'exams' | 'theory' | 'notebook' | 'analytics' | 'teacher'>('exams');
+  const [activeTab, setActiveTab] = useState<'exams' | 'theory' | 'notebook' | 'analytics' | 'leaderboard' | 'teacher'>('exams');
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [profileModalOpen, setProfileModalOpen] = useState(false);
@@ -80,6 +82,10 @@ const MainAppContent: React.FC = () => {
             onGoToExams={() => {
               resetExamState();
               setActiveTab('exams');
+            }}
+            onGoToLeaderboard={() => {
+              resetExamState();
+              setActiveTab('leaderboard');
             }}
           />
         </main>
@@ -143,8 +149,33 @@ const MainAppContent: React.FC = () => {
           />
         )}
 
+        {activeTab === 'leaderboard' && (
+          <LeaderboardView
+            onGoToExams={() => setActiveTab('exams')}
+            onOpenQuickTheory={handleOpenQuickTheory}
+          />
+        )}
+
         {activeTab === 'teacher' && (
-          <TeacherStudio />
+          currentUser?.role === 'teacher' ? (
+            <TeacherStudio />
+          ) : (
+            <div className="max-w-xl mx-auto my-16 p-8 bg-white rounded-3xl border border-slate-200 shadow-md text-center">
+              <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🔒</span>
+              </div>
+              <h2 className="text-lg font-bold text-slate-900 mb-2">Quyền truy cập bị giới hạn</h2>
+              <p className="text-xs text-slate-600 mb-6 leading-relaxed">
+                Chức năng quản lý và biên soạn Ngân hàng đề thi / câu hỏi chỉ dành riêng cho tài khoản có vai trò <strong>Giáo viên</strong>. Tài khoản học sinh không thể truy cập khu vực này.
+              </p>
+              <button
+                onClick={() => setActiveTab('exams')}
+                className="px-5 py-2.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+              >
+                Quay lại danh sách đề thi
+              </button>
+            </div>
+          )
         )}
       </main>
 
