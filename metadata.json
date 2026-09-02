@@ -1,5 +1,5 @@
 {
-  "name": "Hệ Thống Ôn Thi Tốt Nghiệp THPT Môn Tin Học",
+  "name": "Hệ thống Ôn thi Tốt nghiệp THPT môn Tin học",
   "description": "Hệ thống ôn tập, thi thử, phân tích năng lực kiến thức và biên soạn bài giảng chuẩn cấu trúc đề thi Tốt nghiệp THPT môn Tin học.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

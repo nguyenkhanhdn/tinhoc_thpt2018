@@ -935,11 +935,11 @@ export const TeacherStudio: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
                   <h3 className="text-base font-bold text-slate-900">
-                    Cơ sở dữ liệu SQLite cục bộ (tin_hoc.sqlite)
+                    Cơ sở dữ liệu Supabase (PostgreSQL Cloud) & SQLite
                   </h3>
                 </div>
                 <p className="text-xs text-slate-600 mt-1">
-                  Toàn bộ ngân hàng câu hỏi, bài học lý thuyết, cấu hình đề thi, kết quả làm bài của học sinh và sổ tay cá nhân đều được lưu trữ trực tiếp trong tệp cơ sở dữ liệu SQLite.
+                  Hệ thống hỗ trợ kết nối trực tiếp với <strong>Supabase PostgreSQL</strong> trên Cloud hoặc chạy cơ sở dữ liệu SQLite cục bộ bền vững. Toàn bộ câu hỏi, bài học, đề thi, kết quả và sổ tay đều được đồng bộ tự động.
                 </p>
               </div>
 
@@ -958,7 +958,7 @@ export const TeacherStudio: React.FC = () => {
                   className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  <span>{isResettingDb ? 'Đang khôi phục...' : 'Khôi phục dữ liệu gốc'}</span>
+                  <span>{isResettingDb ? 'Đang đồng bộ...' : 'Đồng bộ lại dữ liệu gốc'}</span>
                 </button>
               </div>
             </div>
@@ -1028,20 +1028,32 @@ export const TeacherStudio: React.FC = () => {
                 <div className="text-[11px] text-slate-600 mt-0.5">Câu hỏi đánh dấu & ghi chú</div>
               </div>
 
-              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                <div className="text-xs text-slate-600 font-semibold">Dung lượng tệp SQLite</div>
-                <div className="text-lg font-black text-slate-800 mt-1 truncate">
-                  {dbStats?.fileSizeBytes ? `${(dbStats.fileSizeBytes / 1024).toFixed(1)} KB` : 'Đang hoạt động'}
+              <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-xl">
+                <div className="text-xs text-emerald-800 font-bold">Trạng thái kết nối DB</div>
+                <div className="text-sm font-black text-emerald-900 mt-1 truncate">
+                  {dbStats?.provider || 'Supabase & SQLite Ready'}
                 </div>
-                <div className="text-[11px] text-slate-600 mt-0.5 truncate">
-                  sqlite_data/tin_hoc.sqlite
+                <div className="text-[11px] text-emerald-700 mt-0.5 truncate">
+                  Đã tạo sẵn mã SQL Supabase
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 p-4 bg-purple-50/60 border border-purple-100 rounded-xl text-xs text-purple-900 leading-relaxed">
-              <span className="font-bold">Lưu ý cấu trúc cơ sở dữ liệu: </span>
-              Cơ sở dữ liệu SQLite hoạt động đầy đủ cả phía máy chủ và đồng bộ phản hồi tức thì với giao diện người dùng. Khi thầy/cô thêm câu hỏi, soạn bài học hoặc khi học sinh nộp bài kiểm tra, tất cả đều được thực thi câu lệnh SQL INSERT/UPDATE tương ứng.
+            {/* Supabase Instruction Box */}
+            <div className="mt-6 p-5 bg-gradient-to-br from-emerald-900 to-teal-950 text-white rounded-2xl shadow-sm">
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 font-black text-sm">
+                  ⚡
+                </div>
+                <h4 className="text-sm font-bold text-emerald-200">
+                  Hướng dẫn cấu hình Supabase Cloud cho ứng dụng
+                </h4>
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed mb-3">
+                1. Tạo một dự án miễn phí tại <strong>supabase.com</strong>.<br />
+                2. Vào mục <strong>SQL Editor</strong> và chạy toàn bộ mã trong tệp <code className="bg-emerald-950 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-700">supabase_schema.sql</code> (đã tạo sẵn trong thư mục gốc).<br />
+                3. Thêm <code className="bg-emerald-950 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-700">SUPABASE_URL</code> và <code className="bg-emerald-950 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-700">SUPABASE_ANON_KEY</code> vào Settings / Environment Variables. Hệ thống sẽ tự động chuyển sang lưu trữ trên Supabase Cloud!
+              </p>
             </div>
           </div>
         </div>

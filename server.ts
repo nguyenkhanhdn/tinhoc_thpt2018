@@ -31,6 +31,33 @@ import {
   updateBookmark,
   removeBookmark
 } from "./server/db.js";
+import {
+  isSupabaseConfigured,
+  getSupabaseStats,
+  seedSupabaseIfEmpty,
+  getSupabaseUsers,
+  getSupabaseUserByUsername,
+  createSupabaseUser,
+  updateSupabaseUser,
+  getSupabaseTopics,
+  getSupabaseLessons,
+  createSupabaseLesson,
+  updateSupabaseLesson,
+  deleteSupabaseLesson,
+  getSupabaseQuestions,
+  createSupabaseQuestion,
+  updateSupabaseQuestion,
+  deleteSupabaseQuestion,
+  getSupabaseExams,
+  createSupabaseExam,
+  deleteSupabaseExam,
+  getSupabaseExamResults,
+  createSupabaseExamResult,
+  getSupabaseBookmarks,
+  toggleSupabaseBookmark,
+  updateSupabaseBookmark,
+  removeSupabaseBookmark
+} from "./server/supabase.js";
 
 dotenv.config();
 
@@ -50,12 +77,20 @@ function getAI(): GoogleGenAI | null {
 }
 
 async function startServer() {
-  // Pre-initialize SQLite Database
-  try {
-    await getDatabase();
-    console.log("SQLite database initialized successfully.");
-  } catch (err) {
-    console.error("Failed to initialize SQLite database:", err);
+  // Check Supabase vs SQLite
+  const useSupabase = isSupabaseConfigured();
+  if (useSupabase) {
+    console.log("⚡ Supabase credentials detected! Initializing Supabase cloud database...");
+    await seedSupabaseIfEmpty();
+    console.log("✅ Supabase cloud database is active and ready.");
+  } else {
+    // Pre-initialize SQLite Database
+    try {
+      await getDatabase();
+      console.log("💾 SQLite database initialized successfully (Supabase credentials not yet supplied in .env).");
+    } catch (err) {
+      console.error("Failed to initialize SQLite database:", err);
+    }
   }
 
   const app = express();
@@ -63,11 +98,17 @@ async function startServer() {
 
   app.use(express.json({ limit: "10mb" }));
 
-  // ==================== SQLITE DB API ROUTES ====================
+  // ==================== DATABASE API ROUTES (SUPABASE / SQLITE) ====================
 
   // 1. Database Health & Stats
   app.get("/api/db/stats", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        const stats = await getSupabaseStats();
+        if (stats) {
+          return res.json({ success: true, dbType: "supabase", stats });
+        }
+      }
       const stats = await getDbStats();
       res.json({ success: true, dbType: "sqlite3", stats });
     } catch (err: any) {
@@ -77,6 +118,11 @@ async function startServer() {
 
   app.post("/api/db/reset", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        await seedSupabaseIfEmpty();
+        const stats = await getSupabaseStats();
+        return res.json({ success: true, message: "Supabase synced with default curriculum datasets", stats });
+      }
       const stats = await resetDatabaseToDefaults();
       res.json({ success: true, message: "Database reset to defaults successfully", stats });
     } catch (err: any) {
@@ -87,8 +133,12 @@ async function startServer() {
   // 2. Users & Auth API
   app.get("/api/users", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        const users = await getSupabaseUsers();
+        return res.json({ success: true, provider: "supabase", data: users });
+      }
       const users = await getAllUsers();
-      res.json({ success: true, data: users });
+      res.json({ success: true, provider: "sqlite3", data: users });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -100,6 +150,18 @@ async function startServer() {
       if (!username) {
         return res.status(400).json({ success: false, message: "Tên đăng nhập không được để trống." });
       }
+
+      if (isSupabaseConfigured()) {
+        const user = await getSupabaseUserByUsername(username);
+        if (!user) {
+          return res.status(404).json({ success: false, message: "Tên đăng nhập không tồn tại trong cơ sở dữ liệu Supabase." });
+        }
+        if (password && user.password && user.password !== password) {
+          return res.status(401).json({ success: false, message: "Mật khẩu không chính xác." });
+        }
+        return res.json({ success: true, provider: "supabase", data: user });
+      }
+
       const user = await getUserByUsername(username);
       if (!user) {
         return res.status(404).json({ success: false, message: "Tên đăng nhập không tồn tại trong cơ sở dữ liệu SQLite." });
@@ -107,7 +169,7 @@ async function startServer() {
       if (password && user.password && user.password !== password) {
         return res.status(401).json({ success: false, message: "Mật khẩu không chính xác." });
       }
-      res.json({ success: true, data: user });
+      res.json({ success: true, provider: "sqlite3", data: user });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -116,17 +178,27 @@ async function startServer() {
   app.post("/api/users/register", async (req, res) => {
     try {
       const userData = req.body;
-      const existing = await getUserByUsername(userData.username);
-      if (existing) {
-        return res.status(409).json({ success: false, message: "Tên đăng nhập đã tồn tại trong cơ sở dữ liệu SQLite." });
-      }
       const newUser = {
         ...userData,
         id: userData.id || `user_${Date.now()}`,
         createdAt: new Date().toISOString().split('T')[0]
       };
+
+      if (isSupabaseConfigured()) {
+        const existing = await getSupabaseUserByUsername(userData.username);
+        if (existing) {
+          return res.status(409).json({ success: false, message: "Tên đăng nhập đã tồn tại trong Supabase." });
+        }
+        const created = await createSupabaseUser(newUser);
+        return res.json({ success: true, provider: "supabase", data: created });
+      }
+
+      const existing = await getUserByUsername(userData.username);
+      if (existing) {
+        return res.status(409).json({ success: false, message: "Tên đăng nhập đã tồn tại trong cơ sở dữ liệu SQLite." });
+      }
       const created = await createUser(newUser);
-      res.json({ success: true, data: created });
+      res.json({ success: true, provider: "sqlite3", data: created });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -134,11 +206,19 @@ async function startServer() {
 
   app.put("/api/users/:id", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        const updated = await updateSupabaseUser(req.params.id, req.body);
+        if (!updated) {
+          return res.status(404).json({ success: false, message: "Không tìm thấy người dùng trong Supabase." });
+        }
+        return res.json({ success: true, provider: "supabase", data: updated });
+      }
+
       const updated = await updateUser(req.params.id, req.body);
       if (!updated) {
         return res.status(404).json({ success: false, message: "Không tìm thấy người dùng." });
       }
-      res.json({ success: true, data: updated });
+      res.json({ success: true, provider: "sqlite3", data: updated });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -147,8 +227,12 @@ async function startServer() {
   // 3. Topics & Lessons API
   app.get("/api/topics", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        const topics = await getSupabaseTopics();
+        return res.json({ success: true, provider: "supabase", data: topics });
+      }
       const topics = await getAllTopics();
-      res.json({ success: true, data: topics });
+      res.json({ success: true, provider: "sqlite3", data: topics });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -156,8 +240,12 @@ async function startServer() {
 
   app.get("/api/lessons", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        const lessons = await getSupabaseLessons();
+        return res.json({ success: true, provider: "supabase", data: lessons });
+      }
       const lessons = await getAllLessons();
-      res.json({ success: true, data: lessons });
+      res.json({ success: true, provider: "sqlite3", data: lessons });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -171,8 +259,14 @@ async function startServer() {
         id: lessonData.id || `lesson_${Date.now()}`,
         updatedAt: new Date().toISOString().split('T')[0]
       };
+
+      if (isSupabaseConfigured()) {
+        const created = await createSupabaseLesson(newLesson);
+        return res.json({ success: true, provider: "supabase", data: created });
+      }
+
       const created = await createLesson(newLesson);
-      res.json({ success: true, data: created });
+      res.json({ success: true, provider: "sqlite3", data: created });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -180,11 +274,19 @@ async function startServer() {
 
   app.put("/api/lessons/:id", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        const updated = await updateSupabaseLesson(req.params.id, req.body);
+        if (!updated) {
+          return res.status(404).json({ success: false, message: "Không tìm thấy bài học trong Supabase." });
+        }
+        return res.json({ success: true, provider: "supabase", data: updated });
+      }
+
       const updated = await updateLesson(req.params.id, req.body);
       if (!updated) {
         return res.status(404).json({ success: false, message: "Không tìm thấy bài học." });
       }
-      res.json({ success: true, data: updated });
+      res.json({ success: true, provider: "sqlite3", data: updated });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -192,8 +294,12 @@ async function startServer() {
 
   app.delete("/api/lessons/:id", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        await deleteSupabaseLesson(req.params.id);
+        return res.json({ success: true, provider: "supabase", message: "Đã xóa bài học khỏi Supabase." });
+      }
       await deleteLesson(req.params.id);
-      res.json({ success: true, message: "Đã xóa bài học khỏi SQLite." });
+      res.json({ success: true, provider: "sqlite3", message: "Đã xóa bài học khỏi SQLite." });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -202,8 +308,12 @@ async function startServer() {
   // 4. Questions API
   app.get("/api/questions", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        const questions = await getSupabaseQuestions();
+        return res.json({ success: true, provider: "supabase", data: questions });
+      }
       const questions = await getAllQuestions();
-      res.json({ success: true, data: questions });
+      res.json({ success: true, provider: "sqlite3", data: questions });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -216,8 +326,14 @@ async function startServer() {
         ...questionData,
         id: questionData.id || `q_${Date.now()}`
       };
+
+      if (isSupabaseConfigured()) {
+        const created = await createSupabaseQuestion(newQ);
+        return res.json({ success: true, provider: "supabase", data: created });
+      }
+
       const created = await createQuestion(newQ);
-      res.json({ success: true, data: created });
+      res.json({ success: true, provider: "sqlite3", data: created });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -225,11 +341,19 @@ async function startServer() {
 
   app.put("/api/questions/:id", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        const updated = await updateSupabaseQuestion(req.params.id, req.body);
+        if (!updated) {
+          return res.status(404).json({ success: false, message: "Không tìm thấy câu hỏi trong Supabase." });
+        }
+        return res.json({ success: true, provider: "supabase", data: updated });
+      }
+
       const updated = await updateQuestion(req.params.id, req.body);
       if (!updated) {
         return res.status(404).json({ success: false, message: "Không tìm thấy câu hỏi." });
       }
-      res.json({ success: true, data: updated });
+      res.json({ success: true, provider: "sqlite3", data: updated });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -237,8 +361,12 @@ async function startServer() {
 
   app.delete("/api/questions/:id", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        await deleteSupabaseQuestion(req.params.id);
+        return res.json({ success: true, provider: "supabase", message: "Đã xóa câu hỏi khỏi Supabase." });
+      }
       await deleteQuestion(req.params.id);
-      res.json({ success: true, message: "Đã xóa câu hỏi khỏi SQLite." });
+      res.json({ success: true, provider: "sqlite3", message: "Đã xóa câu hỏi khỏi SQLite." });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -247,8 +375,12 @@ async function startServer() {
   // 5. Exams API
   app.get("/api/exams", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        const exams = await getSupabaseExams();
+        return res.json({ success: true, provider: "supabase", data: exams });
+      }
       const exams = await getAllExams();
-      res.json({ success: true, data: exams });
+      res.json({ success: true, provider: "sqlite3", data: exams });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -262,8 +394,14 @@ async function startServer() {
         id: examData.id || `exam_${Date.now()}`,
         createdAt: new Date().toISOString().split('T')[0]
       };
+
+      if (isSupabaseConfigured()) {
+        const created = await createSupabaseExam(newExam);
+        return res.json({ success: true, provider: "supabase", data: created });
+      }
+
       const created = await createExam(newExam);
-      res.json({ success: true, data: created });
+      res.json({ success: true, provider: "sqlite3", data: created });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -271,8 +409,12 @@ async function startServer() {
 
   app.delete("/api/exams/:id", async (req, res) => {
     try {
+      if (isSupabaseConfigured()) {
+        await deleteSupabaseExam(req.params.id);
+        return res.json({ success: true, provider: "supabase", message: "Đã xóa đề thi khỏi Supabase." });
+      }
       await deleteExam(req.params.id);
-      res.json({ success: true, message: "Đã xóa đề thi khỏi SQLite." });
+      res.json({ success: true, provider: "sqlite3", message: "Đã xóa đề thi khỏi SQLite." });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -282,8 +424,12 @@ async function startServer() {
   app.get("/api/exam-results", async (req, res) => {
     try {
       const userId = req.query.userId as string | undefined;
+      if (isSupabaseConfigured()) {
+        const results = await getSupabaseExamResults(userId);
+        return res.json({ success: true, provider: "supabase", data: results });
+      }
       const results = await getAllExamResults(userId);
-      res.json({ success: true, data: results });
+      res.json({ success: true, provider: "sqlite3", data: results });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -296,8 +442,14 @@ async function startServer() {
         ...resultData,
         id: resultData.id || `res_${Date.now()}`
       };
+
+      if (isSupabaseConfigured()) {
+        const created = await createSupabaseExamResult(newResult);
+        return res.json({ success: true, provider: "supabase", data: created });
+      }
+
       const created = await createExamResult(newResult);
-      res.json({ success: true, data: created });
+      res.json({ success: true, provider: "sqlite3", data: created });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -307,8 +459,12 @@ async function startServer() {
   app.get("/api/bookmarks", async (req, res) => {
     try {
       const userId = req.query.userId as string | undefined;
+      if (isSupabaseConfigured()) {
+        const bookmarks = await getSupabaseBookmarks(userId);
+        return res.json({ success: true, provider: "supabase", data: bookmarks });
+      }
       const bookmarks = await getBookmarks(userId);
-      res.json({ success: true, data: bookmarks });
+      res.json({ success: true, provider: "sqlite3", data: bookmarks });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -317,8 +473,12 @@ async function startServer() {
   app.post("/api/bookmarks/toggle", async (req, res) => {
     try {
       const { userId, questionId, note, masteryStatus } = req.body;
+      if (isSupabaseConfigured()) {
+        const result = await toggleSupabaseBookmark(userId || 'user_student_1', questionId, note, masteryStatus);
+        return res.json({ success: true, provider: "supabase", ...result });
+      }
       const result = await toggleBookmark(userId || 'user_student_1', questionId, note, masteryStatus);
-      res.json({ success: true, ...result });
+      res.json({ success: true, provider: "sqlite3", ...result });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -327,8 +487,12 @@ async function startServer() {
   app.put("/api/bookmarks", async (req, res) => {
     try {
       const { userId, questionId, note, masteryStatus } = req.body;
+      if (isSupabaseConfigured()) {
+        await updateSupabaseBookmark(userId || 'user_student_1', questionId, note, masteryStatus);
+        return res.json({ success: true, provider: "supabase", message: "Đã cập nhật ghi chú sổ tay trong Supabase." });
+      }
       await updateBookmark(userId || 'user_student_1', questionId, note, masteryStatus);
-      res.json({ success: true, message: "Đã cập nhật ghi chú sổ tay trong SQLite." });
+      res.json({ success: true, provider: "sqlite3", message: "Đã cập nhật ghi chú sổ tay trong SQLite." });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -337,8 +501,12 @@ async function startServer() {
   app.delete("/api/bookmarks", async (req, res) => {
     try {
       const { userId, questionId } = req.body;
+      if (isSupabaseConfigured()) {
+        await removeSupabaseBookmark(userId || 'user_student_1', questionId);
+        return res.json({ success: true, provider: "supabase", message: "Đã xóa câu hỏi khỏi sổ tay Supabase." });
+      }
       await removeBookmark(userId || 'user_student_1', questionId);
-      res.json({ success: true, message: "Đã xóa câu hỏi khỏi sổ tay SQLite." });
+      res.json({ success: true, provider: "sqlite3", message: "Đã xóa câu hỏi khỏi sổ tay SQLite." });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -346,8 +514,13 @@ async function startServer() {
 
   // Health check
   app.get("/api/health", (req, res) => {
-    res.json({ status: "ok", aiAvailable: !!process.env.GEMINI_API_KEY, db: "sqlite3" });
+    res.json({
+      status: "ok",
+      aiAvailable: !!process.env.GEMINI_API_KEY,
+      db: isSupabaseConfigured() ? "supabase" : "sqlite3"
+    });
   });
+
 
   // AI Endpoint: Generate Question for Informatics Exam
   app.post("/api/ai/generate-question", async (req, res) => {
