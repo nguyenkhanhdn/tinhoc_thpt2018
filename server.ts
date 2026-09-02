@@ -60,6 +60,9 @@ import {
 } from "./server/supabase.js";
 
 dotenv.config();
+if (!process.env.SUPABASE_URL) {
+  dotenv.config({ path: path.join(process.cwd(), ".env.example") });
+}
 
 let aiClient: GoogleGenAI | null = null;
 function getAI(): GoogleGenAI | null {
