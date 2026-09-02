@@ -12,8 +12,6 @@ import {
   CheckCircle2, 
   XCircle, 
   AlertCircle, 
-  AlertTriangle,
-  Flame,
   Sparkles, 
   Code, 
   Send,
@@ -64,13 +62,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Time & Progress calculations
-  const totalDurationSeconds = (currentExam.durationMinutes || 50) * 60;
-  const timePercentage = Math.max(0, Math.min(100, (timeRemaining / totalDurationSeconds) * 100));
-  
-  const isUnder5Mins = examMode === 'exam' && timeRemaining <= 5 * 60 && timeRemaining > 0;
-  const isUnder2Mins = examMode === 'exam' && timeRemaining <= 2 * 60 && timeRemaining > 0;
-  const isUnder1Min = examMode === 'exam' && timeRemaining <= 60 && timeRemaining > 0;
+  const isLowTime = examMode === 'exam' && timeRemaining <= 5 * 60;
 
   // Calculate answered count
   let answeredCount = 0;
@@ -114,18 +106,18 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
     <div className="min-h-screen bg-slate-100 flex flex-col">
       
       {/* Sticky Exam Top Bar */}
-      <header className="sticky top-0 z-30 bg-slate-900 text-white shadow-lg border-b border-slate-800">
+      <header className="sticky top-0 z-30 bg-slate-900 text-white shadow-md border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           {/* Exam Title & Exit */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => {
-                if (window.confirm('Bạn có chắc chắn muốn thoát khỏi phòng thi? Bài làm chưa nộp sẽ không được lưu.')) {
+                if (window.confirm('Bạn có chắc chắn muốn rời khỏi phòng thi? Bài làm chưa nộp sẽ không được lưu.')) {
                   resetExamState();
                 }
               }}
-              className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 transition-colors text-xs flex items-center gap-1"
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 transition-colors text-xs flex items-center gap-1.5"
             >
               <ChevronLeft className="w-4 h-4" />
               <span className="hidden sm:inline">Rời phòng thi</span>
@@ -133,13 +125,13 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
 
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-xs sm:text-sm text-white line-clamp-1 max-w-[240px] sm:max-w-md">
+                <span className="font-bold text-xs sm:text-sm text-white line-clamp-1 max-w-[280px] sm:max-w-md">
                   {currentExam.title}
                 </span>
-                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
-                  examMode === 'exam' ? 'bg-amber-500/30 text-amber-300 border border-amber-400/30' : 'bg-blue-500/30 text-blue-300 border border-blue-400/30'
+                <span className={`px-2.5 py-0.5 text-[10px] font-bold rounded-full ${
+                  examMode === 'exam' ? 'bg-amber-500/20 text-amber-300 border border-amber-400/30' : 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
                 }`}>
-                  {examMode === 'exam' ? `Thi thử (${currentExam.durationMinutes}p)` : 'Ôn tập tự do'}
+                  {examMode === 'exam' ? 'Thi thử (50 phút)' : 'Ôn tập tự do'}
                 </span>
               </div>
             </div>
@@ -148,125 +140,51 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
           {/* Timer & Submit CTA */}
           <div className="flex items-center gap-3 sm:gap-4">
             
-            {/* Urgency Color-Changing Timer Badge */}
+            {/* Timer Badge */}
             {examMode === 'exam' && (
-              <div className="flex items-center gap-2">
-                <div 
-                  id="exam-timer-badge"
-                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-mono text-sm font-bold border transition-all duration-300 ${
-                    isUnder1Min
-                      ? 'animate-urgency-glow-critical text-white'
-                      : isUnder5Mins
-                      ? 'animate-urgency-glow text-white'
-                      : 'bg-slate-800/90 text-slate-100 border-slate-700/80 shadow-xs'
-                  }`}
-                  title={isUnder5Mins ? 'Cảnh báo: Thời gian làm bài còn dưới 5 phút!' : 'Thời gian làm bài còn lại'}
-                >
-                  {isUnder5Mins ? (
-                    <Flame className={`w-4 h-4 text-amber-200 ${isUnder2Mins ? 'animate-bounce' : 'animate-pulse'}`} />
-                  ) : (
-                    <Clock className="w-4 h-4 text-sky-400" />
-                  )}
-                  
-                  <span className="tracking-wider text-sm sm:text-base font-black">
-                    {formatTime(timeRemaining)}
-                  </span>
-
-                  {isUnder5Mins && (
-                    <span className="text-[10px] uppercase font-black tracking-wider px-1.5 py-0.5 rounded bg-black/40 text-amber-100 hidden sm:inline-block shadow-xs border border-white/20">
-                      {isUnder1Min ? 'Sắp hết giờ!' : '< 5 Phút'}
-                    </span>
-                  )}
-                </div>
+              <div className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-mono text-sm font-bold border transition-colors ${
+                isLowTime
+                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse'
+                  : 'bg-white/10 text-white border-white/15'
+              }`}>
+                <Clock className={`w-4 h-4 ${isLowTime ? 'text-rose-400' : 'text-sky-400'}`} />
+                <span>{formatTime(timeRemaining)}</span>
               </div>
             )}
 
             {/* Submit Button */}
             <button
               onClick={() => setShowSubmitConfirm(true)}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Nộp bài thi</span>
             </button>
           </div>
         </div>
-
-        {/* Dynamic Visual Progress Bar for Exam Time */}
-        {examMode === 'exam' && (
-          <div className="w-full bg-slate-950/80 h-1.5 sm:h-2 relative overflow-hidden border-t border-slate-800">
-            <div 
-              id="exam-time-progress-bar"
-              className={`h-full transition-all duration-500 ease-linear relative ${
-                isUnder1Min
-                  ? 'bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 animate-stripes animate-progress-pulse'
-                  : isUnder5Mins
-                  ? 'bg-gradient-to-r from-rose-600 via-amber-500 to-red-500 animate-stripes animate-progress-pulse'
-                  : timePercentage <= 30
-                  ? 'bg-gradient-to-r from-amber-500 to-amber-400'
-                  : 'bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500'
-              }`}
-              style={{ width: `${timePercentage}%` }}
-            />
-          </div>
-        )}
       </header>
-
-      {/* Urgent Warning Banner when < 5 minutes remaining */}
-      {isUnder5Mins && (
-        <div className="bg-gradient-to-r from-rose-700 via-red-600 to-amber-600 text-white px-4 py-2.5 shadow-md animate-in slide-in-from-top-3 duration-300">
-          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-2 font-medium">
-              <div className="p-1 bg-white/20 rounded-lg animate-pulse shrink-0">
-                <AlertTriangle className="w-4 h-4 text-amber-200" />
-              </div>
-              <div>
-                <span className="font-black uppercase tracking-wider text-amber-200 mr-1.5">
-                  Khẩn trương:
-                </span>
-                <span>
-                  Thời gian làm bài chỉ còn lại <strong className="underline decoration-amber-300 font-mono text-sm font-black text-amber-100">{formatTime(timeRemaining)}</strong>. Hãy rà soát lại các câu hỏi phân vân trước khi hệ thống tự động nộp bài!
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="hidden md:flex items-center gap-2 bg-black/25 px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-white/10">
-                <span>Thời gian còn:</span>
-                <span className="font-mono font-bold text-amber-200">{Math.round(timePercentage)}%</span>
-              </div>
-              <button
-                onClick={() => setShowSubmitConfirm(true)}
-                className="px-3 py-1 bg-white text-rose-800 font-bold rounded-lg hover:bg-amber-50 transition-colors shadow-xs"
-              >
-                Nộp ngay
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left/Main Column: Question Body & Answers */}
         <div className="lg:col-span-8 space-y-4">
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 relative">
+          <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 sm:p-7 relative">
             
             {/* Question Meta Header */}
             <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <span className="px-3 py-1 bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-xs">
+                <span className="px-3.5 py-1 bg-gradient-to-r from-sky-500 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-xs">
                   Câu {activeQuestionIndex + 1} / {currentExam.questions.length}
                 </span>
                 
-                <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-md ${
-                  currentQ.type === 'single_choice' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-purple-50 text-purple-700 border border-purple-200'
+                <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${
+                  currentQ.type === 'single_choice' ? 'bg-sky-50 text-sky-700 border border-sky-200/80' : 'bg-purple-50 text-purple-700 border border-purple-200/80'
                 }`}>
-                  {currentQ.type === 'single_choice' ? 'Phần I: 4 lựa chọn (0.25đ)' : 'Phần II: Đúng / Sai 4 ý (1.0đ)'}
+                  {currentQ.type === 'single_choice' ? 'Phần I: 4 lựa chọn (0,25đ)' : 'Phần II: Đúng / Sai 4 ý (1,0đ)'}
                 </span>
 
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-600 rounded-md">
+                <span className="px-2.5 py-0.5 text-[10px] font-bold bg-slate-100 text-slate-600 rounded-full">
                   Mức độ: {currentQ.cognitiveLevel}
                 </span>
               </div>
@@ -277,10 +195,10 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                 {/* 📖 Tham khảo lý thuyết button */}
                 <button
                   onClick={() => onOpenQuickTheory(currentQ.lessonId)}
-                  className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200/80 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5"
                   title="Mở ngay bài học lý thuyết tham chiếu để tra cứu kiến thức"
                 >
-                  <BookOpen className="w-3.5 h-3.5 text-indigo-700" />
+                  <BookOpen className="w-3.5 h-3.5 text-sky-600" />
                   <span>Tham khảo lý thuyết</span>
                 </button>
 
@@ -298,7 +216,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                       ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
                       : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-amber-50 hover:text-amber-700'
                   }`}
-                  title={isBookmarked ? 'Đã lưu vào sổ tay câu hỏi khó' : 'Lưu câu hỏi này để nghiên cứu sâu'}
+                  title={isBookmarked ? 'Đã lưu vào sổ tay câu hỏi' : 'Lưu câu hỏi này để nghiên cứu sâu'}
                 >
                   <Bookmark className="w-4 h-4 fill-current" />
                 </button>
@@ -308,7 +226,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                   onClick={() => toggleFlagQuestion(currentQ.id)}
                   className={`p-2 rounded-xl border text-xs font-semibold transition-colors ${
                     isFlagged
-                      ? 'bg-amber-100 text-amber-700 border-amber-300 shadow-xs'
+                      ? 'bg-amber-100 text-amber-800 border-amber-300 shadow-xs'
                       : 'bg-slate-50 text-slate-400 border-slate-200 hover:text-slate-600'
                   }`}
                   title="Đánh dấu câu hỏi cần xem lại trước khi nộp"
@@ -352,23 +270,23 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                     <div
                       key={optionKey}
                       onClick={() => selectSingleChoiceAnswer(currentQ.id, optionKey)}
-                      className={`p-3.5 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                      className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                         isSelected
                           ? isCorrect
                             ? 'border-emerald-500 bg-emerald-50 text-emerald-950 shadow-xs'
                             : isWrong
                             ? 'border-rose-500 bg-rose-50 text-rose-950 shadow-xs'
-                            : 'border-indigo-600 bg-indigo-50/70 text-indigo-950 shadow-xs'
-                          : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                            : 'border-indigo-500 bg-indigo-50/70 text-indigo-950 shadow-xs'
+                          : 'border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/60'
                       }`}
                     >
-                      <div className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center font-bold text-xs transition-colors ${
+                      <div className={`w-7 h-7 rounded-xl shrink-0 flex items-center justify-center font-bold text-xs transition-colors ${
                         isSelected
                           ? isCorrect
                             ? 'bg-emerald-600 text-white'
                             : isWrong
                             ? 'bg-rose-600 text-white'
-                            : 'bg-indigo-700 text-white'
+                            : 'bg-indigo-600 text-white'
                           : 'bg-slate-100 text-slate-700'
                       }`}>
                         {optionKey}
@@ -383,9 +301,9 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
 
                 {/* Instant Explanation in Practice Mode */}
                 {examMode === 'practice' && currentAnswer?.singleChoiceSelected && (
-                  <div className="mt-4 p-4 rounded-2xl bg-indigo-50/80 border border-indigo-100 text-xs text-indigo-950 space-y-1.5 animate-in fade-in duration-200">
-                    <div className="font-bold flex items-center gap-1.5 text-indigo-900">
-                      <HelpCircle className="w-4 h-4 text-indigo-700" />
+                  <div className="mt-4 p-4 rounded-2xl bg-sky-50/80 border border-sky-100 text-xs text-slate-800 space-y-1.5 animate-in fade-in duration-200">
+                    <div className="font-bold flex items-center gap-1.5 text-sky-900">
+                      <HelpCircle className="w-4 h-4 text-sky-600" />
                       <span>Đáp án chính xác: {currentQ.correctAnswer}</span>
                     </div>
                     <p className="leading-relaxed text-slate-700">{currentQ.explanation}</p>
@@ -408,10 +326,10 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                     return (
                       <div
                         key={sub.id}
-                        className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                        className="p-3.5 rounded-2xl border border-slate-200/90 bg-slate-50/60 hover:bg-white transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                       >
                         <div className="flex items-start gap-2.5 flex-1">
-                          <span className="w-6 h-6 rounded-md bg-purple-100 text-purple-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="w-6 h-6 rounded-lg bg-purple-100 text-purple-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                             {sub.label}
                           </span>
                           <span className="text-xs sm:text-sm text-slate-800 leading-relaxed">
@@ -424,7 +342,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                           <button
                             type="button"
                             onClick={() => selectTrueFalseAnswer(currentQ.id, sub.label, true)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
                               chosenValue === true
                                 ? 'bg-emerald-600 text-white shadow-xs'
                                 : 'bg-white border border-slate-200 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'
@@ -437,7 +355,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                           <button
                             type="button"
                             onClick={() => selectTrueFalseAnswer(currentQ.id, sub.label, false)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
                               chosenValue === false
                                 ? 'bg-rose-600 text-white shadow-xs'
                                 : 'bg-white border border-slate-200 text-slate-600 hover:bg-rose-50 hover:text-rose-700'
@@ -454,7 +372,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
 
                 {/* Explanation in Practice Mode */}
                 {examMode === 'practice' && currentAnswer?.trueFalseSelected && (
-                  <div className="mt-4 p-4 rounded-2xl bg-purple-50 border border-purple-100 text-xs text-purple-950 space-y-1.5">
+                  <div className="mt-4 p-4 rounded-2xl bg-purple-50/80 border border-purple-100 text-xs text-purple-950 space-y-1.5">
                     <div className="font-bold text-purple-900">Giải thích chi tiết:</div>
                     <p className="leading-relaxed text-slate-700">{currentQ.explanation}</p>
                   </div>
@@ -467,20 +385,20 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
               <button
                 onClick={() => setActiveQuestionIndex(Math.max(0, activeQuestionIndex - 1))}
                 disabled={activeQuestionIndex === 0}
-                className="px-4 py-2 border border-slate-300 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-30 flex items-center gap-1"
+                className="px-4 py-2.5 border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-30 flex items-center gap-1"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>Câu trước</span>
               </button>
 
               <div className="text-xs text-slate-500">
-                Đã trả lời: <span className="font-bold text-indigo-700">{Math.floor(answeredCount)}</span> / {currentExam.questions.length}
+                Đã trả lời: <span className="font-bold text-indigo-600">{Math.floor(answeredCount)}</span> / {currentExam.questions.length}
               </div>
 
               <button
                 onClick={() => setActiveQuestionIndex(Math.min(currentExam.questions.length - 1, activeQuestionIndex + 1))}
                 disabled={activeQuestionIndex === currentExam.questions.length - 1}
-                className="px-4 py-2 bg-indigo-700 text-white text-xs font-semibold rounded-xl hover:bg-indigo-800 transition-colors disabled:opacity-30 flex items-center gap-1 shadow-xs"
+                className="px-4 py-2.5 bg-indigo-600 text-white text-xs font-semibold rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-30 flex items-center gap-1 shadow-xs"
               >
                 <span>Câu tiếp</span>
                 <ChevronRight className="w-4 h-4" />
@@ -491,50 +409,14 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
 
         {/* Right Column: Question Palette Matrix */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sticky top-24">
+          <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-5 sticky top-20">
             
-            {/* Sidebar Time Summary Widget for Exam Mode */}
-            {examMode === 'exam' && (
-              <div className={`p-3.5 rounded-xl border mb-4 transition-all duration-300 ${
-                isUnder5Mins
-                  ? 'bg-rose-50 border-rose-200 text-rose-950'
-                  : 'bg-slate-50 border-slate-200 text-slate-800'
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1.5 text-xs font-bold">
-                    {isUnder5Mins ? (
-                      <Flame className="w-4 h-4 text-rose-600 animate-bounce" />
-                    ) : (
-                      <Clock className="w-4 h-4 text-indigo-600" />
-                    )}
-                    <span>{isUnder5Mins ? 'Sắp hết giờ làm bài' : 'Thời gian còn lại'}</span>
-                  </div>
-                  <span className={`font-mono font-black text-sm ${
-                    isUnder5Mins ? 'text-rose-600 animate-pulse' : 'text-slate-900'
-                  }`}>
-                    {formatTime(timeRemaining)}
-                  </span>
-                </div>
-
-                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                  <div 
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      isUnder5Mins
-                        ? 'bg-gradient-to-r from-rose-500 to-red-600 animate-progress-pulse'
-                        : 'bg-indigo-600'
-                    }`}
-                    style={{ width: `${timePercentage}%` }}
-                  />
-                </div>
-              </div>
-            )}
-
             {/* Palette Header */}
             <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">
                 Bảng câu hỏi ({currentExam.questions.length})
               </h3>
-              <span className="text-[11px] font-bold text-indigo-700">
+              <span className="text-[11px] font-bold text-indigo-600">
                 Tiến độ: {Math.round((answeredCount / currentExam.questions.length) * 100)}%
               </span>
             </div>
@@ -567,7 +449,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                     onClick={() => setActiveQuestionIndex(idx)}
                     className={`h-9 rounded-xl font-bold text-xs transition-all relative flex items-center justify-center ${
                       isActive
-                        ? 'ring-2 ring-indigo-700 ring-offset-2 scale-105 z-10'
+                        ? 'ring-2 ring-indigo-600 ring-offset-2 scale-105 z-10'
                         : ''
                     } ${
                       flagged
@@ -590,7 +472,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
             <div className="mt-5 pt-4 border-t border-slate-100">
               <button
                 onClick={() => setShowSubmitConfirm(true)}
-                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
                 <span>Nộp bài và xem kết quả</span>
@@ -603,7 +485,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
       {/* Submit Confirmation Modal */}
       {showSubmitConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200">
             <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
               <Send className="w-6 h-6" />
             </div>
@@ -615,7 +497,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
               Bạn có chắc chắn muốn kết thúc bài thi và nhận phân tích chẩn đoán năng lực?
             </p>
 
-            <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-100 text-xs space-y-2 mb-5">
+            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 text-xs space-y-2 mb-5">
               <div className="flex justify-between">
                 <span className="text-slate-600">Tổng số câu hỏi:</span>
                 <span className="font-bold text-slate-900">{currentExam.questions.length} câu</span>
@@ -636,7 +518,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
               <button
                 type="button"
                 onClick={() => setShowSubmitConfirm(false)}
-                className="flex-1 py-2.5 border border-slate-300 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors"
+                className="flex-1 py-2.5 border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors"
               >
                 Tiếp tục làm bài
               </button>
@@ -647,7 +529,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
                   setShowSubmitConfirm(false);
                   await submitExam();
                 }}
-                className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors disabled:opacity-50"
+                className="flex-1 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors disabled:opacity-50"
               >
                 {isSubmitting ? 'Đang chấm điểm...' : 'Đồng ý nộp bài'}
               </button>
@@ -659,9 +541,9 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
       {/* Bookmark with Note Modal */}
       {showNoteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2 text-amber-700 font-bold text-sm">
+              <div className="flex items-center gap-2 text-amber-800 font-bold text-sm">
                 <Bookmark className="w-5 h-5 fill-amber-500" />
                 <span>Lưu vào sổ tay nghiên cứu sâu</span>
               </div>
@@ -679,7 +561,7 @@ export const ExamTakingView: React.FC<ExamTakingViewProps> = ({ onOpenQuickTheor
               onChange={(e) => setNoteText(e.target.value)}
               placeholder="Ví dụ: Cần xem lại cú pháp lệnh GROUP BY và HAVING trong SQL..."
               rows={3}
-              className="w-full p-3 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-hidden mb-4"
+              className="w-full p-3 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-hidden mb-4"
             />
 
             <div className="flex justify-end gap-2">

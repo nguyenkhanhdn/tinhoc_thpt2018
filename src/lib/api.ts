@@ -60,7 +60,7 @@ export const dbApi = {
       }
       return { success: false, message: json.message || 'Đăng nhập thất bại' };
     } catch (err: any) {
-      return { success: false, message: err.message || 'Lỗi kết nối cơ sở dữ liệu SQLite' };
+      return { success: false, message: err.message || 'Lỗi kết nối cơ sở dữ liệu Supabase' };
     }
   },
 
@@ -77,7 +77,7 @@ export const dbApi = {
       }
       return { success: false, message: json.message || 'Đăng ký thất bại' };
     } catch (err: any) {
-      return { success: false, message: err.message || 'Lỗi kết nối cơ sở dữ liệu SQLite' };
+      return { success: false, message: err.message || 'Lỗi kết nối cơ sở dữ liệu Supabase' };
     }
   },
 

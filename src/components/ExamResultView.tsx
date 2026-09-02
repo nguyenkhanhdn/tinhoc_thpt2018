@@ -17,22 +17,19 @@ import {
   Sparkles,
   Flame,
   BrainCircuit,
-  X,
-  Trophy
+  X
 } from 'lucide-react';
 
 interface ExamResultViewProps {
   onOpenQuickTheory: (lessonId: string) => void;
   onGoToNotebook: () => void;
   onGoToExams: () => void;
-  onGoToLeaderboard?: () => void;
 }
 
 export const ExamResultView: React.FC<ExamResultViewProps> = ({
   onOpenQuickTheory,
   onGoToNotebook,
-  onGoToExams,
-  onGoToLeaderboard
+  onGoToExams
 }) => {
   const { currentResult, currentExam, startExam, toggleBookmark, isQuestionBookmarked } = useExam();
   const { topics, getLessonById } = useTheory();
@@ -87,65 +84,66 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
       {/* Top Banner: Score & Overview */}
-      <div className={`rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden ${
+      <div className={`rounded-3xl p-6 sm:p-8 text-white shadow-md relative overflow-hidden ${
         isExcellent
-          ? 'bg-gradient-to-r from-emerald-800 via-teal-800 to-blue-900'
+          ? 'bg-gradient-to-r from-teal-600 via-emerald-600 to-sky-600'
           : isGood
-          ? 'bg-gradient-to-r from-blue-800 via-indigo-800 to-slate-900'
-          : 'bg-gradient-to-r from-slate-900 via-indigo-900 to-amber-900'
+          ? 'bg-gradient-to-r from-sky-600 via-indigo-600 to-blue-700'
+          : 'bg-gradient-to-r from-indigo-700 via-blue-700 to-amber-600'
       }`}>
+        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-72 h-72 bg-white/15 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-xs font-bold text-white mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 border border-white/30 backdrop-blur-md rounded-full text-xs font-bold text-white mb-3">
               <Award className="w-4 h-4 text-amber-300" />
-              <span>Báo cáo kết quả và chẩn đoán năng lực</span>
+              <span>Báo cáo kết quả & chẩn đoán năng lực</span>
             </div>
 
             <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight">
               {currentResult.examTitle}
             </h1>
-            <p className="text-xs text-white/80 mt-1">
+            <p className="text-xs text-white/90 mt-1">
               Thí sinh: <span className="font-semibold text-white">{currentResult.userFullName}</span> • Hoàn thành: {new Date(currentResult.completedAt).toLocaleTimeString('vi-VN')} {new Date(currentResult.completedAt).toLocaleDateString('vi-VN')}
             </p>
           </div>
 
           {/* Main Score Capsule */}
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 text-center min-w-[200px] shrink-0">
-            <div className="text-xs text-white/80 font-medium">Tổng điểm đạt được</div>
+          <div className="bg-white/15 backdrop-blur-md rounded-2xl p-5 border border-white/30 text-center min-w-[200px] shrink-0 shadow-xs">
+            <div className="text-xs text-white/90 font-medium">Tổng điểm đạt được</div>
             <div className="text-4xl sm:text-5xl font-black text-amber-300 my-1 font-mono tracking-tight">
               {currentResult.score.toFixed(2)}
-              <span className="text-sm font-normal text-white/70"> / 10.0</span>
+              <span className="text-sm font-normal text-white/80"> / 10.0</span>
             </div>
-            <div className="text-xs text-white/90 font-semibold">
+            <div className="text-xs text-white/95 font-semibold">
               {isExcellent ? '🌟 Xuất sắc - Nắm rất vững kiến thức' : isGood ? '👍 Khá - Cần tối ưu thêm các câu khó' : '💪 Cần củng cố thêm các chủ đề yếu'}
             </div>
           </div>
         </div>
 
         {/* Detailed Metrics Sub-Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/15">
-          <div className="bg-black/20 rounded-xl p-3">
-            <div className="text-[11px] text-white/70">Điểm Phần I (Trắc nghiệm)</div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/20">
+          <div className="bg-black/15 rounded-2xl p-3 border border-white/10">
+            <div className="text-[11px] text-white/80 font-medium">Điểm phần I (Trắc nghiệm)</div>
             <div className="text-lg font-bold text-white">
               {currentResult.part1Score.toFixed(2)} / 6.00
             </div>
           </div>
-          <div className="bg-black/20 rounded-xl p-3">
-            <div className="text-[11px] text-white/70">Điểm Phần II (Đúng/Sai)</div>
+          <div className="bg-black/15 rounded-2xl p-3 border border-white/10">
+            <div className="text-[11px] text-white/80 font-medium">Điểm phần II (Đúng/Sai)</div>
             <div className="text-lg font-bold text-white">
               {currentResult.part2Score.toFixed(2)} / 4.00
             </div>
           </div>
-          <div className="bg-black/20 rounded-xl p-3">
-            <div className="text-[11px] text-white/70">Thời gian làm bài</div>
+          <div className="bg-black/15 rounded-2xl p-3 border border-white/10">
+            <div className="text-[11px] text-white/80 font-medium">Thời gian làm bài</div>
             <div className="text-lg font-bold text-white">
               {minutesSpent}p {secondsSpent}s
             </div>
           </div>
-          <div className="bg-black/20 rounded-xl p-3">
-            <div className="text-[11px] text-white/70">Số câu đúng tuyệt đối</div>
-            <div className="text-lg font-bold text-emerald-300">
+          <div className="bg-black/15 rounded-2xl p-3 border border-white/10">
+            <div className="text-[11px] text-white/80 font-medium">Số câu đúng tuyệt đối</div>
+            <div className="text-lg font-bold text-amber-300">
               {currentResult.totalCorrectQuestions} / {currentResult.totalQuestions}
             </div>
           </div>
@@ -153,54 +151,45 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
       </div>
 
       {/* Switcher: Diagnostics Analysis vs Detailed Review */}
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-        <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-3 gap-3">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveTab('analysis')}
             className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-2 ${
               activeTab === 'analysis'
-                ? 'bg-indigo-700 text-white shadow-xs'
+                ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-xs'
                 : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
             }`}
           >
             <BrainCircuit className="w-4 h-4" />
-            <span>Phân tích năng lực và chẩn đoán củng cố</span>
+            <span>Phân tích năng lực & chẩn đoán củng cố</span>
           </button>
           
           <button
             onClick={() => setActiveTab('review')}
             className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-2 ${
               activeTab === 'review'
-                ? 'bg-indigo-700 text-white shadow-xs'
+                ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-xs'
                 : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>Xem chi tiết từng câu và tham chiếu lý thuyết</span>
+            <span>Xem chi tiết từng câu & tham chiếu lý thuyết</span>
           </button>
         </div>
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
-          {onGoToLeaderboard && (
-            <button
-              onClick={onGoToLeaderboard}
-              className="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-amber-950 text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
-            >
-              <Trophy className="w-3.5 h-3.5" />
-              <span>Xem Bảng xếp hạng tuần</span>
-            </button>
-          )}
           <button
             onClick={() => startExam(currentExam, 'practice')}
-            className="px-3.5 py-1.5 bg-white border border-slate-300 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5 shadow-2xs"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Làm lại đề này</span>
           </button>
           <button
             onClick={onGoToExams}
-            className="px-3.5 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded-xl hover:bg-slate-900 transition-colors"
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-xl transition-colors shadow-2xs"
           >
             Danh sách đề thi
           </button>
@@ -215,60 +204,60 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Điểm Mạnh */}
-            <div className="bg-white rounded-2xl border border-emerald-200 p-5 shadow-xs">
+            <div className="bg-white rounded-3xl border border-emerald-200 p-6 shadow-xs">
               <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm mb-3">
-                <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
+                <div className="p-1.5 rounded-xl bg-emerald-100 text-emerald-700">
                   <Flame className="w-4 h-4" />
                 </div>
-                <span>Nội dung kiến thức nắm chắc (Điểm mạnh)</span>
+                <span>Nội dung kiến thức nắm chắc (điểm mạnh)</span>
               </div>
 
               {currentResult.strongTopics.length > 0 ? (
                 <div className="space-y-2">
                   {currentResult.strongTopics.map((topicStr, idx) => (
-                    <div key={idx} className="p-3 bg-emerald-50/70 border border-emerald-100 rounded-xl flex items-center justify-between">
+                    <div key={idx} className="p-3 bg-emerald-50/70 border border-emerald-100 rounded-2xl flex items-center justify-between">
                       <div className="flex items-center gap-2 text-xs font-semibold text-emerald-950">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                         <span>{topicStr}</span>
                       </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-200 text-emerald-800 rounded-md">
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 bg-emerald-200 text-emerald-800 rounded-full">
                         Đạt chuẩn
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-slate-500 italic p-3 bg-slate-50 rounded-xl">
+                <p className="text-xs text-slate-500 italic p-3.5 bg-slate-50 rounded-2xl">
                   Chưa có chủ đề nào đạt tỷ lệ chính xác trên 75%. Hãy tiếp tục luyện tập đều các phân môn.
                 </p>
               )}
             </div>
 
             {/* Điểm Yếu Cần Củng Cố */}
-            <div className="bg-white rounded-2xl border border-rose-200 p-5 shadow-xs">
+            <div className="bg-white rounded-3xl border border-rose-200 p-6 shadow-xs">
               <div className="flex items-center gap-2 text-rose-800 font-bold text-sm mb-3">
-                <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700">
+                <div className="p-1.5 rounded-xl bg-rose-100 text-rose-700">
                   <AlertTriangle className="w-4 h-4" />
                 </div>
-                <span>Nội dung cần được củng cố và tập trung (Điểm cần khắc phục)</span>
+                <span>Nội dung cần được củng cố & tập trung (điểm cần khắc phục)</span>
               </div>
 
               {currentResult.weakTopics.length > 0 ? (
                 <div className="space-y-2">
                   {currentResult.weakTopics.map((topicStr, idx) => (
-                    <div key={idx} className="p-3 bg-rose-50/70 border border-rose-100 rounded-xl flex items-center justify-between">
+                    <div key={idx} className="p-3 bg-rose-50/70 border border-rose-100 rounded-2xl flex items-center justify-between">
                       <div className="flex items-center gap-2 text-xs font-semibold text-rose-950">
                         <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
                         <span>{topicStr}</span>
                       </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 bg-rose-200 text-rose-800 rounded-md">
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 bg-rose-200 text-rose-800 rounded-full">
                         Cần ôn lại
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-xs text-emerald-800 flex items-center gap-2">
+                <div className="p-3.5 bg-emerald-50 border border-emerald-100 rounded-2xl text-xs text-emerald-800 flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>Rất tốt! Bạn không bị hổng kiến thức ở bất kỳ chủ đề trọng tâm nào.</span>
                 </div>
@@ -277,9 +266,9 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
           </div>
 
           {/* Detailed Topic-by-Topic Mastery Bar Chart */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+          <div className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs">
             <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-blue-600" />
+              <TrendingUp className="w-4 h-4 text-sky-600" />
               <span>Phân tích chi tiết tỷ lệ làm đúng theo từng chủ đề (A - G)</span>
             </h3>
 
@@ -295,10 +284,10 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                         <span className="font-bold text-slate-800">
                           {perf.topicCode}: {perf.topicTitle}
                         </span>
-                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
+                        <span className={`px-2.5 py-0.5 text-[10px] font-bold rounded-full ${
                           isStrong ? 'bg-emerald-100 text-emerald-800' : isWeak ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'
                         }`}>
-                          {isStrong ? 'Mạnh (Vững)' : isWeak ? 'Yếu (Cần ôn)' : 'Trung bình'}
+                          {isStrong ? 'Mạnh (vững)' : isWeak ? 'Yếu (cần ôn)' : 'Trung bình'}
                         </span>
                       </div>
                       <span className="font-mono font-bold text-slate-700">
@@ -307,7 +296,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                     </div>
 
                     {/* Progress Track */}
-                    <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
                           isStrong ? 'bg-emerald-500' : isWeak ? 'bg-rose-500' : 'bg-amber-500'
@@ -323,10 +312,10 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
 
           {/* AI Pedagogical Diagnosis & Recommendations */}
           {currentResult.aiDiagnostic && (
-            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-2xl p-6 shadow-xs space-y-4">
-              <div className="flex items-center gap-2 text-indigo-900 font-bold text-sm">
+            <div className="bg-gradient-to-br from-sky-50 via-indigo-50 to-blue-50 border border-indigo-100 rounded-3xl p-6 shadow-xs space-y-4">
+              <div className="flex items-center gap-2 text-indigo-950 font-bold text-sm">
                 <Sparkles className="w-5 h-5 text-indigo-600" />
-                <span>Lời khuyên và lộ trình củng cố của trợ lý giáo viên</span>
+                <span>Lời khuyên & lộ trình củng cố của trợ lý giáo viên</span>
               </div>
 
               <p className="text-xs text-indigo-950 leading-relaxed font-medium">
@@ -362,15 +351,15 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setFilterWrongOnly(false)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold ${
-                  !filterWrongOnly ? 'bg-indigo-700 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold ${
+                  !filterWrongOnly ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
                 Tất cả câu ({currentExam.questions.length})
               </button>
               <button
                 onClick={() => setFilterWrongOnly(true)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold ${
                   filterWrongOnly ? 'bg-rose-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
@@ -383,7 +372,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
               <select
                 value={selectedTopicFilter}
                 onChange={(e) => setSelectedTopicFilter(e.target.value)}
-                className="px-3 py-1.5 text-xs border border-slate-300 rounded-xl outline-hidden bg-white"
+                className="px-3 py-1.5 text-xs border border-slate-200 rounded-xl outline-hidden bg-white"
               >
                 <option value="all">Tất cả chủ đề</option>
                 {topics.map(t => (
@@ -412,14 +401,14 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
               return (
                 <div
                   key={q.id}
-                  className={`bg-white rounded-2xl border p-5 sm:p-6 shadow-xs transition-all ${
+                  className={`bg-white rounded-3xl border p-5 sm:p-6 shadow-xs transition-all ${
                     isFullyCorrect ? 'border-emerald-200' : 'border-rose-200'
                   }`}
                 >
                   {/* Question Header */}
                   <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100">
                     <div className="flex items-center gap-2">
-                      <span className={`px-2.5 py-1 text-xs font-bold rounded-lg flex items-center gap-1 ${
+                      <span className={`px-3 py-1 text-xs font-bold rounded-xl flex items-center gap-1 ${
                         isFullyCorrect ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
                       }`}>
                         {isFullyCorrect ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
@@ -437,14 +426,14 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                       {/* 📖 Tham khảo lý thuyết button */}
                       <button
                         onClick={() => onOpenQuickTheory(q.lessonId)}
-                        className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5"
+                        className="px-3.5 py-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200/80 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5"
                         title="Mở bài học lý thuyết tương ứng với câu hỏi này"
                       >
-                        <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+                        <BookOpen className="w-3.5 h-3.5 text-sky-600" />
                         <span>Tham khảo lý thuyết</span>
                       </button>
 
-                      {/* ⭐ Lưu vào sổ tay nghiên cứu sâu */}
+                      {/* ⭐ Lưu vào Sổ tay nghiên cứu sâu */}
                       <button
                         onClick={() => {
                           if (isBookmarked) {
@@ -472,8 +461,8 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
 
                   {/* Code snippet if any */}
                   {q.codeSnippet && (
-                    <div className="rounded-xl border border-slate-200 overflow-hidden mb-4">
-                      <div className="bg-slate-800 px-3 py-1 text-slate-200 text-xs font-mono">
+                    <div className="rounded-2xl border border-slate-200 overflow-hidden mb-4">
+                      <div className="bg-slate-800 px-3.5 py-1 text-slate-200 text-xs font-mono">
                         Mã nguồn {q.codeSnippet.language}
                       </div>
                       <pre className="p-3.5 bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto">
@@ -493,7 +482,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                         return (
                           <div
                             key={optKey}
-                            className={`p-3 rounded-xl border text-xs flex items-start gap-2.5 ${
+                            className={`p-3 rounded-2xl border text-xs flex items-start gap-2.5 ${
                               isCorrectKey
                                 ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-semibold'
                                 : isUserChoice && !isCorrectKey
@@ -501,7 +490,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                                 : 'bg-slate-50/70 border-slate-200 text-slate-700'
                             }`}
                           >
-                            <span className={`w-6 h-6 rounded-md font-bold text-xs flex items-center justify-center shrink-0 ${
+                            <span className={`w-6 h-6 rounded-lg font-bold text-xs flex items-center justify-center shrink-0 ${
                               isCorrectKey
                                 ? 'bg-emerald-600 text-white'
                                 : isUserChoice
@@ -537,12 +526,12 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                         return (
                           <div
                             key={sub.id}
-                            className={`p-3 rounded-xl border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
+                            className={`p-3 rounded-2xl border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
                               isSubCorrect ? 'bg-emerald-50/60 border-emerald-200' : 'bg-rose-50/60 border-rose-200'
                             }`}
                           >
                             <div className="flex items-start gap-2">
-                              <span className="font-bold text-purple-800 bg-purple-100 px-2 py-0.5 rounded-md">
+                              <span className="font-bold text-purple-800 bg-purple-100 px-2 py-0.5 rounded-lg">
                                 {sub.label}
                               </span>
                               <span className="text-slate-800">{sub.statement}</span>
@@ -561,15 +550,15 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                   )}
 
                   {/* Detailed Pedagogical Explanation & Lesson Pointer */}
-                  <div className="p-4 bg-indigo-50/80 border border-indigo-100 rounded-xl text-xs text-indigo-950 space-y-1.5">
-                    <div className="flex items-center gap-1.5 font-bold text-indigo-900">
-                      <HelpCircle className="w-4 h-4 text-indigo-600" />
-                      <span>Hướng dẫn giải và phân tích:</span>
+                  <div className="p-4 bg-sky-50/70 border border-sky-100 rounded-2xl text-xs text-slate-800 space-y-1.5">
+                    <div className="flex items-center gap-1.5 font-bold text-sky-900">
+                      <HelpCircle className="w-4 h-4 text-sky-600" />
+                      <span>Hướng dẫn giải & phân tích:</span>
                     </div>
                     <p className="leading-relaxed text-slate-700">{q.explanation}</p>
                     
                     {lesson && (
-                      <div className="pt-2 text-[11px] text-indigo-800 flex items-center gap-1">
+                      <div className="pt-2 text-[11px] text-sky-800 flex items-center gap-1">
                         <BookOpen className="w-3.5 h-3.5" />
                         <span>Bài học tham chiếu: <strong>{lesson.title}</strong></span>
                       </div>
@@ -585,9 +574,9 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
       {/* Bookmark with Note Modal */}
       {bookmarkingQuestionId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2 text-amber-700 font-bold text-sm">
+              <div className="flex items-center gap-2 text-amber-800 font-bold text-sm">
                 <Bookmark className="w-5 h-5 fill-amber-500" />
                 <span>Lưu vào sổ tay nghiên cứu sâu</span>
               </div>
@@ -605,7 +594,7 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
               onChange={(e) => setBookmarkNote(e.target.value)}
               placeholder="Ví dụ: Cần xem lại cú pháp lệnh GROUP BY và HAVING trong SQL..."
               rows={3}
-              className="w-full p-3 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-hidden mb-4"
+              className="w-full p-3 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-hidden mb-4"
             />
 
             <div className="flex justify-end gap-2">

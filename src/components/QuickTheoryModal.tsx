@@ -27,7 +27,7 @@ export const QuickTheoryModal: React.FC<QuickTheoryModalProps> = ({
       <div className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-6 flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-700 via-blue-700 to-sky-700 p-5 text-white relative">
+        <div className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 p-5 text-white relative">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white"
@@ -36,17 +36,17 @@ export const QuickTheoryModal: React.FC<QuickTheoryModalProps> = ({
           </button>
           
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="px-2 py-0.5 text-[11px] font-bold bg-white/20 text-white rounded-md backdrop-blur-xs">
+            <span className="px-2.5 py-0.5 text-[11px] font-bold bg-white/20 text-white rounded-lg backdrop-blur-xs">
               {topic ? topic.shortTitle : 'Lý thuyết trọng tâm'}
             </span>
-            <span className="text-blue-200 text-xs">Tham chiếu kiến thức môn học</span>
+            <span className="text-sky-100 text-xs">Tham chiếu kiến thức môn học</span>
           </div>
 
           <h2 className="text-lg font-bold flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-sky-200" />
             {lesson.title}
           </h2>
-          <p className="text-xs text-blue-100 mt-1 line-clamp-2">
+          <p className="text-xs text-sky-100 mt-1 line-clamp-2 leading-relaxed">
             {lesson.summary}
           </p>
         </div>
@@ -55,15 +55,15 @@ export const QuickTheoryModal: React.FC<QuickTheoryModalProps> = ({
         <div className="p-6 overflow-y-auto space-y-5 text-slate-800 text-sm">
           
           {/* Key Takeaways (Trọng tâm kiến thức) */}
-          <div className="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4">
-            <div className="flex items-center gap-2 text-indigo-900 font-bold text-xs uppercase tracking-wider mb-2.5">
-              <Lightbulb className="w-4 h-4 text-indigo-600" />
+          <div className="bg-sky-50/70 border border-sky-100 rounded-2xl p-4">
+            <div className="flex items-center gap-2 text-sky-950 font-bold text-xs mb-2.5">
+              <Lightbulb className="w-4 h-4 text-sky-600" />
               <span>Điểm kiến thức cốt lõi cần nhớ:</span>
             </div>
             <ul className="space-y-2">
               {lesson.keyTakeaways.map((point, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-xs text-indigo-950">
-                  <CheckCircle className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                <li key={idx} className="flex items-start gap-2 text-xs text-sky-950">
+                  <CheckCircle className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
                   <span>{point}</span>
                 </li>
               ))}
@@ -72,10 +72,10 @@ export const QuickTheoryModal: React.FC<QuickTheoryModalProps> = ({
 
           {/* Exam Tips (Mẹo tránh bẫy đề thi) */}
           {lesson.examTips && lesson.examTips.length > 0 && (
-            <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider mb-2">
+            <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4">
+              <div className="flex items-center gap-2 text-amber-900 font-bold text-xs mb-2">
                 <AlertTriangle className="w-4 h-4 text-amber-600" />
-                <span>Mẹo làm bài và cảnh báo bẫy đề thi:</span>
+                <span>Mẹo làm bài & cảnh báo bẫy đề thi:</span>
               </div>
               <ul className="space-y-1.5">
                 {lesson.examTips.map((tip, idx) => (

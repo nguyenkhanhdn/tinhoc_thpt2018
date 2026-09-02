@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTheory } from '../context/TheoryContext';
 import { useExam } from '../context/ExamContext';
+import { useAuth } from '../context/AuthContext';
 import { SubjectTopic, TheoryLesson, StudyTrack } from '../types';
 import { 
   BookOpen, 
@@ -19,17 +20,21 @@ import {
   Briefcase,
   Sparkles,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  Lock,
+  LogIn
 } from 'lucide-react';
 
 interface TheoryHubProps {
   initialLessonId?: string | null;
   onStartLessonPractice?: (topicId: string) => void;
+  onOpenAuth?: (mode?: 'login' | 'register') => void;
 }
 
-export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLessonPractice }) => {
+export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLessonPractice, onOpenAuth }) => {
   const { topics, lessons, getLessonsByTopic, getLessonById } = useTheory();
   const { questionsBank, startExam } = useExam();
+  const { isAuthenticated } = useAuth();
 
   const [selectedTopicId, setSelectedTopicId] = useState<string>('all');
   const [selectedTrack, setSelectedTrack] = useState<StudyTrack>('ALL');
@@ -65,6 +70,10 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
   };
 
   const handleStartPracticeForLesson = (lesson: TheoryLesson) => {
+    if (!isAuthenticated) {
+      if (onOpenAuth) onOpenAuth('login');
+      return;
+    }
     const matchedQuestions = questionsBank.filter(q => q.lessonId === lesson.id || q.topicId === lesson.topicId);
     if (matchedQuestions.length === 0) return;
 
@@ -90,46 +99,49 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900 rounded-3xl p-6 sm:p-8 text-white mb-8 shadow-sm border border-indigo-800/40">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-gradient-to-r from-sky-500 via-indigo-600 to-blue-600 rounded-3xl p-6 sm:p-8 text-white mb-8 shadow-md relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-72 h-72 bg-white/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 -mb-10 w-60 h-60 bg-sky-300/20 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="px-2.5 py-0.5 text-[10px] font-bold bg-white/10 text-indigo-200 border border-white/15 rounded-full">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="px-3 py-1 text-[11px] font-bold bg-white/20 text-white border border-white/30 rounded-full backdrop-blur-md">
                 Thư viện số hóa
               </span>
-              <span className="text-xs text-slate-300">Chuẩn chương trình GDPT 2018</span>
+              <span className="text-xs text-blue-100 font-medium">Chuẩn chương trình GDPT 2018</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
               Hệ thống kiến thức trọng tâm Tin học 12
             </h1>
-            <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              Tra cứu nhanh lý thuyết, sơ đồ tư duy, cú pháp Python / SQL, mẹo tránh bẫy đề thi tốt nghiệp THPT theo từng chủ đề A, B, D, E, F, G.
+            <p className="text-xs sm:text-sm text-blue-50 mt-1 max-w-2xl leading-relaxed">
+              Tra cứu nhanh lý thuyết, sơ đồ tư duy, cú pháp Python / SQL, mẹo tránh bẫy đề thi tốt nghiệp THPT quốc gia theo từng chủ đề A, B, D, E, F, G.
             </p>
           </div>
 
           {/* Search Bar */}
           <div className="w-full md:w-80">
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <Search className="w-4 h-4 text-blue-200 absolute left-3.5 top-3" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Tìm kiếm bài học, SQL, Python..."
-                className="w-full pl-9 pr-4 py-2 text-xs bg-white/10 border border-white/15 text-white placeholder-slate-400 rounded-xl focus:outline-hidden focus:bg-white/15 focus:border-indigo-400"
+                className="w-full pl-10 pr-4 py-2.5 text-xs bg-white/15 border border-white/25 text-white placeholder-blue-100/70 rounded-2xl focus:outline-hidden focus:bg-white/25 focus:border-white shadow-inner backdrop-blur-md"
               />
             </div>
           </div>
         </div>
 
         {/* Topics Filter Chips */}
-        <div className="flex items-center gap-2 mt-5 overflow-x-auto pb-1">
+        <div className="relative z-10 flex items-center gap-2 mt-5 overflow-x-auto pb-1">
           <button
             onClick={() => setSelectedTopicId('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all ${
               selectedTopicId === 'all'
-                ? 'bg-white text-indigo-950 font-bold shadow-sm'
-                : 'bg-white/10 text-white hover:bg-white/20'
+                ? 'bg-white text-indigo-900 font-bold shadow-sm'
+                : 'bg-white/15 text-white hover:bg-white/25'
             }`}
           >
             Tất cả chủ đề ({lessons.length})
@@ -138,10 +150,10 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
             <button
               key={topic.id}
               onClick={() => setSelectedTopicId(topic.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 flex items-center gap-1.5 transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold shrink-0 flex items-center gap-1.5 transition-all ${
                 selectedTopicId === topic.id
-                  ? 'bg-white text-indigo-950 font-bold shadow-sm'
-                  : 'bg-white/10 text-white hover:bg-white/20'
+                  ? 'bg-white text-indigo-900 font-bold shadow-sm'
+                  : 'bg-white/15 text-white hover:bg-white/25'
               }`}
             >
               {getTopicIcon(topic.iconName)}
@@ -157,32 +169,32 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
         {/* Left Column: Lesson Directory */}
         <div className="lg:col-span-4 space-y-3">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Danh sách bài học ({filteredLessons.length})
             </h2>
             <div className="flex gap-1 text-[11px]">
               <button
                 onClick={() => setSelectedTrack('ALL')}
-                className={`px-2 py-0.5 rounded-md ${selectedTrack === 'ALL' ? 'bg-slate-800 text-white font-bold' : 'text-slate-500 hover:bg-slate-100'}`}
+                className={`px-2.5 py-1 rounded-lg transition-all ${selectedTrack === 'ALL' ? 'bg-slate-800 text-white font-bold shadow-xs' : 'text-slate-500 hover:bg-slate-100'}`}
               >
                 Tất cả
               </button>
               <button
                 onClick={() => setSelectedTrack('ICT')}
-                className={`px-2 py-0.5 rounded-md ${selectedTrack === 'ICT' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-500 hover:bg-slate-100'}`}
+                className={`px-2.5 py-1 rounded-lg transition-all ${selectedTrack === 'ICT' ? 'bg-indigo-600 text-white font-bold shadow-xs' : 'text-slate-500 hover:bg-slate-100'}`}
               >
                 ICT
               </button>
               <button
                 onClick={() => setSelectedTrack('CS')}
-                className={`px-2 py-0.5 rounded-md ${selectedTrack === 'CS' ? 'bg-purple-600 text-white font-bold' : 'text-slate-500 hover:bg-slate-100'}`}
+                className={`px-2.5 py-1 rounded-lg transition-all ${selectedTrack === 'CS' ? 'bg-sky-600 text-white font-bold shadow-xs' : 'text-slate-500 hover:bg-slate-100'}`}
               >
                 CS
               </button>
             </div>
           </div>
 
-          <div className="space-y-2 max-h-[70vh] overflow-y-auto pr-1">
+          <div className="space-y-2.5 max-h-[70vh] overflow-y-auto pr-1">
             {filteredLessons.map(lesson => {
               const topic = topics.find(t => t.id === lesson.topicId);
               const isActive = activeLessonId === lesson.id;
@@ -192,14 +204,14 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
                 <div
                   key={lesson.id}
                   onClick={() => setActiveLessonId(lesson.id)}
-                  className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
+                  className={`p-4 rounded-2xl border transition-all cursor-pointer ${
                     isActive
-                      ? 'border-indigo-600 bg-indigo-50/70 shadow-xs'
-                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                      ? 'border-indigo-500 bg-indigo-50/70 shadow-xs ring-1 ring-indigo-500/30'
+                      : 'border-slate-200/90 bg-white hover:border-indigo-300 hover:bg-slate-50/60'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${topic?.bgLight || 'bg-slate-100'}`}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${topic?.bgLight || 'bg-slate-100'}`}>
                       {topic?.shortTitle}
                     </span>
                     <span className="text-[10px] text-slate-400">
@@ -211,7 +223,7 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
                     {lesson.title}
                   </h3>
 
-                  <p className="text-[11px] text-slate-500 line-clamp-2 mt-1">
+                  <p className="text-[11px] text-slate-500 line-clamp-2 mt-1 leading-relaxed">
                     {lesson.summary}
                   </p>
                 </div>
@@ -219,7 +231,7 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
             })}
 
             {filteredLessons.length === 0 && (
-              <div className="p-8 text-center bg-white rounded-xl border border-dashed border-slate-300 text-slate-400 text-xs">
+              <div className="p-8 text-center bg-white rounded-2xl border border-dashed border-slate-300 text-slate-400 text-xs">
                 Không tìm thấy bài học phù hợp với từ khóa.
               </div>
             )}
@@ -229,16 +241,16 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
         {/* Right Column: Detailed Lesson Viewer */}
         <div className="lg:col-span-8">
           {activeLesson ? (
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
               
               {/* Lesson Top Bar */}
               <div className="p-6 border-b border-slate-100 bg-slate-50/50">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
                   <div className="flex items-center gap-2">
-                    <span className={`px-2.5 py-1 text-xs font-bold rounded-lg ${activeTopic?.bgLight || 'bg-blue-100 text-blue-800'}`}>
+                    <span className={`px-3 py-1 text-xs font-bold rounded-xl ${activeTopic?.bgLight || 'bg-blue-100 text-blue-800'}`}>
                       {activeTopic?.title}
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-400">
                       Cập nhật: {activeLesson.updatedAt}
                     </span>
                   </div>
@@ -246,7 +258,7 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
                   {/* Practice Button */}
                   <button
                     onClick={() => handleStartPracticeForLesson(activeLesson)}
-                    className="px-3.5 py-1.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-semibold rounded-xl transition-all shadow-xs flex items-center gap-1.5"
+                    className="px-4 py-2 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1.5"
                   >
                     <PlayCircle className="w-4 h-4" />
                     <span>Luyện tập câu hỏi bài này</span>
@@ -267,13 +279,13 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
                 {/* Key Takeaways */}
                 <div className="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4">
                   <div className="flex items-center gap-2 text-indigo-900 font-bold text-xs uppercase tracking-wider mb-2.5">
-                    <Lightbulb className="w-4 h-4 text-indigo-700" />
+                    <Lightbulb className="w-4 h-4 text-indigo-600" />
                     <span>Trọng tâm kiến thức cần nắm chắc:</span>
                   </div>
                   <ul className="space-y-2">
                     {activeLesson.keyTakeaways.map((point, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-xs text-indigo-950 font-medium leading-relaxed">
-                        <CheckCircle className="w-4 h-4 text-indigo-700 shrink-0 mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
                         <span>{point}</span>
                       </li>
                     ))}
@@ -285,7 +297,7 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
                   <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4">
                     <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider mb-2">
                       <AlertTriangle className="w-4 h-4 text-amber-600" />
-                      <span>Mẹo làm bài và cảnh báo bẫy đề thi:</span>
+                      <span>Mẹo làm bài & cảnh báo bẫy đề thi:</span>
                     </div>
                     <ul className="space-y-1.5">
                       {activeLesson.examTips.map((tip, idx) => (
@@ -324,14 +336,14 @@ export const TheoryHub: React.FC<TheoryHubProps> = ({ initialLessonId, onStartLe
                 </div>
 
                 {/* Bottom Practice CTA */}
-                <div className="p-5 bg-gradient-to-r from-indigo-50 to-slate-50 border border-indigo-100 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="p-5 bg-gradient-to-r from-sky-50 via-indigo-50 to-slate-50 border border-indigo-100 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div>
                     <h4 className="text-xs font-bold text-indigo-950">Đã nắm vững lý thuyết?</h4>
                     <p className="text-[11px] text-slate-600">Kiểm tra ngay mức độ thông hiểu với các câu hỏi bám sát đề thi tốt nghiệp.</p>
                   </div>
                   <button
                     onClick={() => handleStartPracticeForLesson(activeLesson)}
-                    className="px-4 py-2 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-xl transition-colors shadow-xs shrink-0"
+                    className="px-4 py-2.5 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white text-xs font-bold rounded-xl transition-colors shadow-xs shrink-0"
                   >
                     Bắt đầu luyện tập
                   </button>

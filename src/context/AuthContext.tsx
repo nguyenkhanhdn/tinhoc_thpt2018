@@ -60,9 +60,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem('tin_hoc_active_user');
-      return saved ? JSON.parse(saved) : DEFAULT_USERS[0];
+      return saved ? JSON.parse(saved) : null;
     } catch {
-      return DEFAULT_USERS[0];
+      return null;
     }
   });
 
@@ -72,9 +72,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     dbApi.getUsers().then(remoteUsers => {
       if (isMounted && remoteUsers && remoteUsers.length > 0) {
         setUsers(remoteUsers);
-        // Sync active user if exists in DB
+        // Sync active user only if already logged in
         setCurrentUser(prev => {
-          if (!prev) return remoteUsers[0];
+          if (!prev) return null;
           const matched = remoteUsers.find(u => u.id === prev.id);
           return matched || prev;
         });

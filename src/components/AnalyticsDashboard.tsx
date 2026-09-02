@@ -77,31 +77,32 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-teal-800 via-blue-900 to-indigo-900 rounded-3xl p-6 sm:p-8 text-white shadow-md">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-gradient-to-r from-teal-600 via-sky-600 to-indigo-600 rounded-3xl p-6 sm:p-8 text-white shadow-md relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-72 h-72 bg-white/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-xs font-bold text-teal-200 mb-2">
-              <BarChart3 className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 border border-white/30 backdrop-blur-md rounded-full text-xs font-bold text-teal-100 mb-2">
+              <BarChart3 className="w-3.5 h-3.5 text-teal-200" />
               <span>Hệ thống phân tích năng lực học tập</span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Báo cáo tổng hợp và lộ trình ôn luyện
+              Báo cáo tổng hợp & lộ trình ôn luyện
             </h1>
-            <p className="text-xs sm:text-sm text-teal-100 mt-1 max-w-2xl">
+            <p className="text-xs sm:text-sm text-teal-100 mt-1 max-w-2xl leading-relaxed">
               Hệ thống tự động phân tích dữ liệu các lần làm bài thi thử để chỉ ra chính xác các chuyên đề bạn đã nắm vững và các nội dung cần được củng cố.
             </p>
           </div>
 
           {/* Quick Target KPI */}
           {currentUser && currentUser.role === 'student' && (
-            <div className="bg-white/10 backdrop-blur-xs rounded-2xl p-4 border border-white/20 text-center shrink-0 min-w-[180px]">
-              <div className="text-xs text-teal-200">Mục tiêu điểm số THPT</div>
+            <div className="bg-white/15 backdrop-blur-md rounded-3xl p-5 border border-white/25 text-center shrink-0 min-w-[200px] shadow-xs">
+              <div className="text-xs font-bold text-teal-100">Mục tiêu điểm số THPT</div>
               <div className="text-3xl font-black text-amber-300 my-1 font-mono">
                 {currentUser.targetScore || 9.0}
                 <span className="text-xs font-normal text-white/70"> / 10.0</span>
               </div>
-              <div className="text-[11px] text-white/80 font-semibold">
+              <div className="text-[11px] text-white/90 font-medium">
                 Điểm TB hiện tại: <span className="text-emerald-300 font-bold">{avgScore}</span>
               </div>
             </div>
@@ -109,22 +110,22 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </div>
 
         {/* Global Performance Counters */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/15">
-          <div className="bg-white/10 rounded-xl p-3">
-            <div className="text-[11px] text-teal-200">Số đề thi đã làm</div>
+        <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/20">
+          <div className="bg-white/15 backdrop-blur-md rounded-2xl p-3.5 border border-white/10">
+            <div className="text-[11px] font-medium text-teal-100">Số đề thi đã làm</div>
             <div className="text-xl font-bold text-white">{totalExams} bài</div>
           </div>
-          <div className="bg-white/10 rounded-xl p-3">
-            <div className="text-[11px] text-teal-200">Điểm trung bình</div>
+          <div className="bg-white/15 backdrop-blur-md rounded-2xl p-3.5 border border-white/10">
+            <div className="text-[11px] font-medium text-teal-100">Điểm trung bình</div>
             <div className="text-xl font-bold text-amber-300">{avgScore}</div>
           </div>
-          <div className="bg-white/10 rounded-xl p-3">
-            <div className="text-[11px] text-teal-200">Điểm cao nhất</div>
+          <div className="bg-white/15 backdrop-blur-md rounded-2xl p-3.5 border border-white/10">
+            <div className="text-[11px] font-medium text-teal-100">Điểm cao nhất</div>
             <div className="text-xl font-bold text-emerald-300">{highestScore}</div>
           </div>
-          <div className="bg-white/10 rounded-xl p-3">
-            <div className="text-[11px] text-teal-200">Chuyên đề vững vàng</div>
-            <div className="text-xl font-bold text-teal-200">{strongTopics.length} / {topics.length}</div>
+          <div className="bg-white/15 backdrop-blur-md rounded-2xl p-3.5 border border-white/10">
+            <div className="text-[11px] font-medium text-teal-100">Chuyên đề vững vàng</div>
+            <div className="text-xl font-bold text-white">{strongTopics.length} / {topics.length}</div>
           </div>
         </div>
       </div>
@@ -133,38 +134,38 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Strengths */}
-        <div className="bg-white rounded-2xl border border-emerald-200 p-6 shadow-xs">
+        <div className="bg-white rounded-3xl border border-emerald-200 p-6 shadow-xs">
           <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm mb-4">
             <Flame className="w-5 h-5 text-emerald-600" />
-            <span>Nội dung kiến thức mạnh (Đã vững vàng)</span>
+            <span>Nội dung kiến thức mạnh (đã vững vàng)</span>
           </div>
 
           {strongTopics.length > 0 ? (
             <div className="space-y-3">
               {strongTopics.map(t => (
-                <div key={t.id} className="p-3.5 bg-emerald-50/70 border border-emerald-100 rounded-xl flex items-center justify-between">
+                <div key={t.id} className="p-3.5 bg-emerald-50/70 border border-emerald-100 rounded-2xl flex items-center justify-between">
                   <div>
                     <div className="text-xs font-bold text-emerald-950">{t.title}</div>
                     <div className="text-[11px] text-emerald-700">Tỷ lệ chính xác: {t.percentage}% ({t.correctCount}/{t.totalAnswered} ý)</div>
                   </div>
-                  <span className="px-2 py-1 text-[10px] font-bold bg-emerald-200 text-emerald-900 rounded-lg">
+                  <span className="px-2.5 py-1 text-[10px] font-bold bg-emerald-200 text-emerald-900 rounded-full">
                     Thành thạo
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="p-6 text-center text-slate-400 text-xs bg-slate-50 rounded-xl">
+            <div className="p-6 text-center text-slate-400 text-xs bg-slate-50 rounded-2xl">
               Chưa có đủ dữ liệu. Hãy hoàn thành thêm các bài thi thử để hệ thống nhận diện điểm mạnh của bạn.
             </div>
           )}
         </div>
 
         {/* Weaknesses */}
-        <div className="bg-white rounded-2xl border border-rose-200 p-6 shadow-xs">
+        <div className="bg-white rounded-3xl border border-rose-200 p-6 shadow-xs">
           <div className="flex items-center gap-2 text-rose-800 font-bold text-sm mb-4">
             <AlertTriangle className="w-5 h-5 text-rose-600" />
-            <span>Nội dung cần được củng cố và ưu tiên ôn tập</span>
+            <span>Nội dung cần được củng cố & ưu tiên ôn tập</span>
           </div>
 
           {weakTopics.length > 0 ? (
@@ -174,7 +175,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                 const firstLesson = topicLessons[0];
 
                 return (
-                  <div key={t.id} className="p-3.5 bg-rose-50/70 border border-rose-100 rounded-xl flex items-center justify-between">
+                  <div key={t.id} className="p-3.5 bg-rose-50/70 border border-rose-100 rounded-2xl flex items-center justify-between">
                     <div>
                       <div className="text-xs font-bold text-rose-950">{t.title}</div>
                       <div className="text-[11px] text-rose-700">Tỷ lệ đúng: {t.percentage}% ({t.correctCount}/{t.totalAnswered} ý)</div>
@@ -182,7 +183,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                     {firstLesson && (
                       <button
                         onClick={() => onOpenQuickTheory(firstLesson.id)}
-                        className="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1 shadow-xs"
+                        className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1 shadow-xs"
                       >
                         <BookOpen className="w-3.5 h-3.5" />
                         <span>Ôn lý thuyết</span>
@@ -193,7 +194,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               })}
             </div>
           ) : (
-            <div className="p-6 text-center text-emerald-700 text-xs bg-emerald-50 rounded-xl font-medium flex items-center justify-center gap-2">
+            <div className="p-6 text-center text-emerald-700 text-xs bg-emerald-50 rounded-2xl font-medium flex items-center justify-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
               <span>Tuyệt vời! Hiện tại bạn không bị hổng kiến thức ở các chủ đề đã làm.</span>
             </div>
@@ -202,10 +203,10 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       </div>
 
       {/* Curriculum Mastery Grid A-G */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+      <div className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-blue-600" />
-          <span>Mức độ nắm vững toàn diện các phân môn (Chương trình Tin học 12)</span>
+          <TrendingUp className="w-4 h-4 text-sky-600" />
+          <span>Mức độ nắm vững toàn diện các phân môn (chương trình Tin học 12)</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -215,7 +216,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             return (
               <div
                 key={topic.id}
-                className={`p-4 rounded-xl border transition-all ${
+                className={`p-4 rounded-2xl border transition-all ${
                   topic.isMastered
                     ? 'border-emerald-200 bg-emerald-50/30'
                     : topic.isWeak
@@ -239,7 +240,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                 <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden mb-2">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
-                      topic.isMastered ? 'bg-emerald-500' : topic.isWeak ? 'bg-rose-500' : 'bg-blue-500'
+                      topic.isMastered ? 'bg-emerald-500' : topic.isWeak ? 'bg-rose-500' : 'bg-sky-500'
                     }`}
                     style={{ width: `${Math.max(hasData ? 5 : 0, topic.percentage)}%` }}
                   />
@@ -256,9 +257,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       </div>
 
       {/* Historical Exam Results Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+      <div className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-blue-600" />
+          <Calendar className="w-4 h-4 text-sky-600" />
           <span>Lịch sử các bài thi đã thực hiện ({userResults.length})</span>
         </h3>
 
@@ -271,7 +272,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                   setCurrentResult(res);
                   onViewResult(res.id);
                 }}
-                className="py-3.5 px-2 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer flex items-center justify-between gap-4"
+                className="py-3.5 px-3 hover:bg-slate-50 rounded-2xl transition-colors cursor-pointer flex items-center justify-between gap-4"
               >
                 <div>
                   <div className="text-xs font-bold text-slate-900 leading-snug">{res.examTitle}</div>
@@ -282,7 +283,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="text-right">
-                    <div className="text-sm font-black font-mono text-blue-700">{res.score.toFixed(2)}/10</div>
+                    <div className="text-sm font-black font-mono text-sky-700">{res.score.toFixed(2)}/10</div>
                     <div className="text-[10px] text-slate-400">Đúng {res.totalCorrectQuestions}/{res.totalQuestions} câu</div>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -291,7 +292,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center bg-slate-50 rounded-xl text-slate-400 text-xs">
+          <div className="p-8 text-center bg-slate-50 rounded-2xl text-slate-400 text-xs">
             Bạn chưa thực hiện bài thi thử nào. Hãy chọn một đề thi để bắt đầu luyện tập!
           </div>
         )}

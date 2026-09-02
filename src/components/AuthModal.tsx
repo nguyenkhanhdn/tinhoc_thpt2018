@@ -85,7 +85,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
       <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-200">
         {/* Header Banner */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white relative">
+        <div className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 p-6 text-white relative">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white"
@@ -93,25 +93,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
             <X className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-white/15 rounded-xl backdrop-blur-xs">
-              <GraduationCap className="w-7 h-7 text-blue-100" />
+            <div className="p-2.5 bg-white/20 rounded-2xl backdrop-blur-md">
+              <GraduationCap className="w-7 h-7 text-white" />
             </div>
             <div>
               <h2 className="text-xl font-bold">
                 {mode === 'login' ? 'Đăng nhập tài khoản' : 'Đăng ký thành viên mới'}
               </h2>
-              <p className="text-blue-100 text-xs mt-0.5">
-                Hệ thống ôn thi và thi thử tốt nghiệp THPT môn Tin học
+              <p className="text-sky-100 text-xs mt-0.5">
+                Hệ thống ôn thi tốt nghiệp THPT môn Tin học
               </p>
             </div>
           </div>
 
           {/* Mode Switcher Tabs */}
-          <div className="flex gap-2 mt-4 bg-black/15 p-1 rounded-xl">
+          <div className="flex gap-2 mt-4 bg-black/15 p-1 rounded-2xl">
             <button
               type="button"
               onClick={() => { setMode('login'); setError(null); }}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-xl transition-all ${
                 mode === 'login' ? 'bg-white text-blue-900 shadow-xs' : 'text-blue-100 hover:text-white'
               }`}
             >
@@ -120,7 +120,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
             <button
               type="button"
               onClick={() => { setMode('register'); setError(null); }}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-xl transition-all ${
                 mode === 'register' ? 'bg-white text-blue-900 shadow-xs' : 'text-blue-100 hover:text-white'
               }`}
             >
@@ -149,7 +149,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Ví dụ: hocsinh12 hoặc giaovien_tin"
+                    placeholder="ví dụ: hocsinh12 hoặc giaovien_tin"
                     className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden"
                   />
                 </div>
@@ -174,33 +174,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl transition-colors shadow-sm disabled:opacity-50"
+                  className="w-full py-2.5 px-4 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white font-medium text-sm rounded-xl transition-colors shadow-sm disabled:opacity-50"
                 >
                   {isLoading ? 'Đang xác thực...' : 'Đăng nhập ngay'}
                 </button>
-              </div>
-
-              {/* Quick Demo Logins */}
-              <div className="pt-3 border-t border-slate-100">
-                <p className="text-xs text-slate-500 mb-2 text-center">Tài khoản trải nghiệm nhanh:</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => { setUsername('hocsinh12'); setPassword('123'); }}
-                    className="p-2 text-xs bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-lg text-slate-700 text-left transition-colors"
-                  >
-                    <div className="font-semibold text-blue-700">Học sinh mẫu</div>
-                    <div className="text-[11px] text-slate-500">hocsinh12 / 123</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setUsername('giaovien_tin'); setPassword('123'); }}
-                    className="p-2 text-xs bg-slate-50 hover:bg-purple-50 border border-slate-200 rounded-lg text-slate-700 text-left transition-colors"
-                  >
-                    <div className="font-semibold text-purple-700">Giáo viên Tin học</div>
-                    <div className="text-[11px] text-slate-500">giaovien_tin / 123</div>
-                  </button>
-                </div>
               </div>
             </form>
           ) : (
@@ -214,7 +191,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                     onClick={() => setRole('student')}
                     className={`py-2 px-3 text-xs font-medium rounded-xl border flex items-center justify-center gap-2 transition-all ${
                       role === 'student'
-                        ? 'border-blue-600 bg-blue-50/70 text-blue-700 shadow-xs'
+                        ? 'border-sky-600 bg-sky-50/70 text-sky-700 shadow-xs'
                         : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -247,7 +224,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Ví dụ: quannm12a"
+                    placeholder="ví dụ: quannm12a"
                     className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-hidden"
                   />
                 </div>
@@ -393,7 +370,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-2.5 px-4 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white font-medium text-sm rounded-xl transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-4 h-4" />
                   {isLoading ? 'Đang tạo tài khoản...' : 'Hoàn tất đăng ký'}

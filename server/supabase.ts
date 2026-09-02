@@ -3,6 +3,7 @@ import { User, SubjectTopic, TheoryLesson, Question, Exam, ExamResult, BookmarkN
 import { INITIAL_QUESTIONS } from '../src/data/questionsBank.js';
 import { SUBJECT_TOPICS, INITIAL_LESSONS } from '../src/data/topicsAndLessons.js';
 import { INITIAL_EXAMS } from '../src/data/mockExams.js';
+import { SAMPLE_STUDENTS, INITIAL_SAMPLE_EXAM_RESULTS } from '../src/data/mockStudentResults.js';
 
 let supabaseClient: SupabaseClient | null = null;
 
@@ -167,41 +168,95 @@ export async function seedSupabaseIfEmpty(): Promise<boolean> {
     const { count: usersCount } = await sb.from('users').select('*', { count: 'exact', head: true });
     if ((usersCount || 0) === 0) {
       console.log('Seeding default users to Supabase...');
-      const defaultUsers = [
+      const defaultTeacher = {
+        id: 'user_teacher_1',
+        username: 'giaovien_tin',
+        full_name: 'Thầy Lê Hoàng Long',
+        birth_date: '1982-10-20',
+        email: 'hoanglong.gv@thpt.edu.vn',
+        phone: '0987654321',
+        gender: 'Nam',
+        province: 'Đà Nẵng',
+        password: '123',
+        role: 'teacher',
+        target_score: null,
+        track: 'BOTH',
+        avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+        created_at: '2024-09-01'
+      };
+
+      const studentRows = SAMPLE_STUDENTS.map(s => ({
+        id: s.id,
+        username: s.username,
+        full_name: s.fullName,
+        birth_date: s.birthDate || '',
+        email: s.email || '',
+        phone: s.phone || '',
+        gender: s.gender || 'Nam',
+        province: s.province || 'Hà Nội',
+        password: '123',
+        role: s.role || 'student',
+        target_score: s.targetScore || null,
+        track: s.track || 'BOTH',
+        avatar_url: s.avatarUrl || '',
+        created_at: s.createdAt || new Date().toISOString()
+      }));
+
+      await sb.from('users').insert([defaultTeacher, ...studentRows]);
+    }
+
+    // Check exam results
+    const { count: resultsCount } = await sb.from('exam_results').select('*', { count: 'exact', head: true });
+    if ((resultsCount || 0) === 0) {
+      console.log('Seeding sample exam results to Supabase...');
+      const examResultRows = INITIAL_SAMPLE_EXAM_RESULTS.map(r => ({
+        id: r.id,
+        exam_id: r.examId,
+        exam_title: r.examTitle,
+        user_id: r.userId,
+        user_full_name: r.userFullName,
+        started_at: r.startedAt,
+        completed_at: r.completedAt || new Date().toISOString(),
+        time_spent_seconds: r.timeSpentSeconds,
+        score: r.score,
+        part1_score: r.part1Score,
+        part2_score: r.part2Score,
+        total_correct_questions: r.totalCorrectQuestions,
+        total_questions: r.totalQuestions,
+        answers_json: r.answers || {},
+        topic_performance_json: r.topicPerformance || [],
+        strong_topics_json: r.strongTopics || [],
+        weak_topics_json: r.weakTopics || [],
+        ai_diagnostic_json: r.aiDiagnostic || null
+      }));
+      await sb.from('exam_results').insert(examResultRows);
+    }
+
+    // Check bookmarks
+    const { count: bookmarksCount } = await sb.from('bookmarks').select('*', { count: 'exact', head: true });
+    if ((bookmarksCount || 0) === 0) {
+      console.log('Seeding initial bookmarks to Supabase...');
+      const initialBookmarks = [
         {
-          id: 'user_student_1',
-          username: 'hocsinh12',
-          full_name: 'Nguyễn Minh Quân',
-          birth_date: '2007-05-15',
-          email: 'minhquan.tin12@gmail.com',
-          phone: '0912345678',
-          gender: 'Nam',
-          province: 'Hà Nội',
-          password: '123',
-          role: 'student',
-          target_score: 9.5,
-          track: 'BOTH',
-          avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-          created_at: '2025-01-01'
+          id: 'bm_seed_1',
+          user_id: 'user_student_1',
+          question_id: 'q11',
+          note: 'Chú ý: Cú pháp khóa chính (PRIMARY KEY) trong câu lệnh CREATE TABLE SQL.',
+          mastery_status: 'need_review',
+          created_at: '2025-01-15T10:00:00.000Z',
+          updated_at: '2025-01-15T10:00:00.000Z'
         },
         {
-          id: 'user_teacher_1',
-          username: 'giaovien_tin',
-          full_name: 'Thầy Lê Hoàng Long',
-          birth_date: '1982-10-20',
-          email: 'hoanglong.gv@thpt.edu.vn',
-          phone: '0987654321',
-          gender: 'Nam',
-          province: 'Đà Nẵng',
-          password: '123',
-          role: 'teacher',
-          target_score: null,
-          track: 'BOTH',
-          avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-          created_at: '2024-09-01'
+          id: 'bm_seed_2',
+          user_id: 'user_student_1',
+          question_id: 'q27',
+          note: 'Bài toán lập lịch và giải thuật tìm kiếm chu trình đồ thị (Chủ đề F - Khoa học máy tính).',
+          mastery_status: 'mastered',
+          created_at: '2025-01-20T15:30:00.000Z',
+          updated_at: '2025-01-20T15:30:00.000Z'
         }
       ];
-      await sb.from('users').insert(defaultUsers);
+      await sb.from('bookmarks').insert(initialBookmarks);
     }
 
     return true;

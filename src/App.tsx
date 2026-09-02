@@ -1,29 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { TheoryProvider, useTheory } from './context/TheoryContext';
 import { ExamProvider, useExam } from './context/ExamContext';
-import { Navbar } from './components/Navbar';
+import { Navbar, NavTab } from './components/Navbar';
+import { LandingPortal } from './components/LandingPortal';
 import { ExamList } from './components/ExamList';
 import { ExamTakingView } from './components/ExamTakingView';
 import { ExamResultView } from './components/ExamResultView';
 import { TheoryHub } from './components/TheoryHub';
 import { QuestionNotebookView } from './components/QuestionNotebookView';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
-import { LeaderboardView } from './components/LeaderboardView';
 import { TeacherStudio } from './components/TeacherStudio';
 import { AuthModal } from './components/AuthModal';
 import { ProfileModal } from './components/ProfileModal';
 import { QuickTheoryModal } from './components/QuickTheoryModal';
+import { ShieldAlert, LogIn, Sparkles } from 'lucide-react';
 
 const MainAppContent: React.FC = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, isAuthenticated, switchDemoRole } = useAuth();
   const { isExamRunning, currentResult, setCurrentResult, resetExamState } = useExam();
   const { quickTheoryModalId, setQuickTheoryModalId } = useTheory();
 
-  const [activeTab, setActiveTab] = useState<'exams' | 'theory' | 'notebook' | 'analytics' | 'leaderboard' | 'teacher'>('exams');
+  const [activeTab, setActiveTab] = useState<NavTab>(() => {
+    return isAuthenticated ? (currentUser?.role === 'teacher' ? 'teacher' : 'exams') : 'intro';
+  });
+  
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+
+  // Sync default tab on login/logout state change
+  useEffect(() => {
+    if (!isAuthenticated) {
+      if (activeTab === 'notebook' || activeTab === 'analytics' || activeTab === 'teacher') {
+        setActiveTab('intro');
+      }
+    } else {
+      if (activeTab === 'intro') {
+        setActiveTab(currentUser?.role === 'teacher' ? 'teacher' : 'exams');
+      } else if (currentUser?.role === 'student' && activeTab === 'teacher') {
+        setActiveTab('exams');
+      }
+    }
+  }, [isAuthenticated, currentUser?.role]);
 
   // Lesson ID for deep link to full theory view
   const [selectedTheoryLessonId, setSelectedTheoryLessonId] = useState<string | null>(null);
@@ -83,10 +102,6 @@ const MainAppContent: React.FC = () => {
               resetExamState();
               setActiveTab('exams');
             }}
-            onGoToLeaderboard={() => {
-              resetExamState();
-              setActiveTab('leaderboard');
-            }}
           />
         </main>
 
@@ -122,57 +137,127 @@ const MainAppContent: React.FC = () => {
 
       {/* Main Tab Router */}
       <main className="flex-1">
-        {activeTab === 'exams' && (
-          <ExamList onOpenQuickTheory={handleOpenQuickTheory} />
+        
+        {/* Introduction / Portal View */}
+        {activeTab === 'intro' && (
+          <LandingPortal
+            onOpenAuth={handleOpenAuth}
+            onExploreExams={() => setActiveTab('exams')}
+            onExploreTheory={() => setActiveTab('theory')}
+          />
         )}
 
+        {/* Exams View */}
+        {activeTab === 'exams' && (
+          <ExamList 
+            onOpenQuickTheory={handleOpenQuickTheory} 
+            onOpenAuth={handleOpenAuth}
+          />
+        )}
+
+        {/* Theory Hub View */}
         {activeTab === 'theory' && (
           <TheoryHub
             initialLessonId={selectedTheoryLessonId}
             onStartLessonPractice={(topicId) => {
               setActiveTab('exams');
             }}
+            onOpenAuth={handleOpenAuth}
           />
         )}
 
+        {/* Notebook View - Restricted for Authenticated Users */}
         {activeTab === 'notebook' && (
-          <QuestionNotebookView onOpenQuickTheory={handleOpenQuickTheory} />
-        )}
-
-        {activeTab === 'analytics' && (
-          <AnalyticsDashboard
-            onOpenQuickTheory={handleOpenQuickTheory}
-            onGoToExams={() => setActiveTab('exams')}
-            onViewResult={(resultId) => {
-              // Current result is already set in context
-            }}
-          />
-        )}
-
-        {activeTab === 'leaderboard' && (
-          <LeaderboardView
-            onGoToExams={() => setActiveTab('exams')}
-            onOpenQuickTheory={handleOpenQuickTheory}
-          />
-        )}
-
-        {activeTab === 'teacher' && (
-          currentUser?.role === 'teacher' ? (
-            <TeacherStudio />
+          isAuthenticated ? (
+            <QuestionNotebookView onOpenQuickTheory={handleOpenQuickTheory} />
           ) : (
-            <div className="max-w-xl mx-auto my-16 p-8 bg-white rounded-3xl border border-slate-200 shadow-md text-center">
-              <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🔒</span>
+            <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-3xl border border-slate-200 text-center shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4">
+                <ShieldAlert className="w-6 h-6" />
               </div>
-              <h2 className="text-lg font-bold text-slate-900 mb-2">Quyền truy cập bị giới hạn</h2>
-              <p className="text-xs text-slate-600 mb-6 leading-relaxed">
-                Chức năng quản lý và biên soạn Ngân hàng đề thi / câu hỏi chỉ dành riêng cho tài khoản có vai trò <strong>Giáo viên</strong>. Tài khoản học sinh không thể truy cập khu vực này.
+              <h2 className="text-lg font-bold text-slate-900">Yêu cầu đăng nhập</h2>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Tính năng Sổ tay câu hỏi và lưu trữ câu sai yêu cầu tài khoản học sinh để đồng bộ hóa dữ liệu cá nhân.
               </p>
               <button
-                onClick={() => setActiveTab('exams')}
-                className="px-5 py-2.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+                onClick={() => handleOpenAuth('login')}
+                className="mt-6 w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
               >
-                Quay lại danh sách đề thi
+                <LogIn className="w-4 h-4" />
+                <span>Đăng nhập ngay</span>
+              </button>
+            </div>
+          )
+        )}
+
+        {/* Analytics View - Restricted for Authenticated Users */}
+        {activeTab === 'analytics' && (
+          isAuthenticated ? (
+            <AnalyticsDashboard
+              onOpenQuickTheory={handleOpenQuickTheory}
+              onGoToExams={() => setActiveTab('exams')}
+              onViewResult={(resultId) => {
+                // Current result handled in context
+              }}
+            />
+          ) : (
+            <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-3xl border border-slate-200 text-center shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <h2 className="text-lg font-bold text-slate-900">Yêu cầu đăng nhập</h2>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Biểu đồ ma trận năng lực và lịch sử điểm số yêu cầu tài khoản để theo dõi lộ trình ôn luyện.
+              </p>
+              <button
+                onClick={() => handleOpenAuth('login')}
+                className="mt-6 w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Đăng nhập ngay</span>
+              </button>
+            </div>
+          )
+        )}
+
+        {/* Teacher Studio View - Role restricted for Teacher */}
+        {activeTab === 'teacher' && (
+          isAuthenticated ? (
+            currentUser?.role === 'teacher' ? (
+              <TeacherStudio />
+            ) : (
+              <div className="max-w-lg mx-auto my-16 p-8 bg-white rounded-3xl border border-slate-200 text-center shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <h2 className="text-lg font-bold text-slate-900">Khu vực dành cho giáo viên</h2>
+                <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                  Tài khoản hiện tại của bạn có vai trò <strong>Học sinh</strong>. Để trải nghiệm tính năng biên soạn đề thi, xuất đề PDF và quản trị ngân hàng câu hỏi, bạn có thể chuyển đổi vai trò sang Giáo viên.
+                </p>
+                <button
+                  onClick={() => switchDemoRole('teacher')}
+                  className="mt-6 w-full py-2.5 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Chuyển sang vai trò Giáo viên để tiếp tục</span>
+                </button>
+              </div>
+            )
+          ) : (
+            <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-3xl border border-slate-200 text-center shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-4">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <h2 className="text-lg font-bold text-slate-900">Khu vực dành cho giáo viên</h2>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Vui lòng đăng nhập với tài khoản Giáo viên để truy cập công cụ biên soạn bài giảng và quản trị ma trận đề thi.
+              </p>
+              <button
+                onClick={() => handleOpenAuth('login')}
+                className="mt-6 w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Đăng nhập giáo viên</span>
               </button>
             </div>
           )
@@ -183,11 +268,11 @@ const MainAppContent: React.FC = () => {
       <footer className="bg-white border-t border-slate-200/80 py-6 mt-12 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800">Tin học THPT 2025</span>
-            <span>• Hệ thống ôn thi và khảo sát chất lượng tốt nghiệp quốc gia</span>
+            <span className="font-bold text-slate-800">Tin học THPT</span>
+            <span>• Hệ thống ôn thi tốt nghiệp THPT môn Tin học</span>
           </div>
           <div>
-            Bám sát chương trình GDPT 2018 và định dạng đề thi Bộ Giáo dục và Đào tạo
+            Bám sát chương trình GDPT 2018 & cấu trúc định dạng đề thi của Bộ Giáo dục và Đào tạo
           </div>
         </div>
       </footer>
